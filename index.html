@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MakerKit 3D - Ultimate Parametric Utility Hub</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card: #151d30;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --text: #f8fafc;
+      --text-dim: #94a3b8;
+      --border: #243049;
+      --success: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; }
+    header { background-color: var(--card); border-bottom: 1px solid var(--border); padding: 0.9rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { font-size: 1.2rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.5rem; }
+    header h1 span { color: var(--accent); }
+    .badge { background: rgba(59, 130, 246, 0.15); color: var(--accent); padding: 0.2rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.3); }
+    
+    .nav-tabs { display: flex; background: var(--card); border-bottom: 1px solid var(--border); padding: 0 1rem; overflow-x: auto; }
+    .nav-tab { padding: 0.8rem 1.1rem; background: none; border: none; color: var(--text-dim); font-size: 0.85rem; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: 0.2s; }
+    .nav-tab:hover { color: var(--text); }
+    .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    
+    .workspace { display: flex; flex: 1; flex-direction: row; height: calc(100vh - 110px); }
+    .control-panel { width: 360px; min-width: 320px; background: var(--card); border-right: 1px solid var(--border); padding: 1.25rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
+    .preview-area { flex: 1; position: relative; background: #070a12; }
+    #viewport { width: 100%; height: 100%; }
+
+    .tool-group { display: none; flex-direction: column; gap: 1rem; }
+    .tool-group.active { display: flex; }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-group label { font-size: 0.8rem; font-weight: 500; color: var(--text-dim); display: flex; justify-content: space-between; }
+    .form-group label span { color: var(--text); font-weight: 600; }
+    input[type="text"], input[type="number"], select, input[type="file"] { background: #0b0f19; border: 1px solid var(--border); color: #fff; padding: 0.55rem 0.75rem; border-radius: 6px; font-size: 0.85rem; width: 100%; outline: none; }
+    input[type="text"]:focus, select:focus { border-color: var(--accent); }
+    input[type="range"] { accent-color: var(--accent); }
+
+    .btn { background: var(--accent); color: white; border: none; padding: 0.7rem 1.1rem; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: 0.2s; }
+    .btn:hover { background: var(--accent-hover); }
+    .btn-download { background: var(--success); margin-top: 0.5rem; }
+    .btn-download:hover { background: #059669; }
+
+    .info-card { background: rgba(59, 130, 246, 0.06); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 6px; padding: 0.75rem; font-size: 0.8rem; line-height: 1.4; color: var(--text-dim); }
+    .info-card strong { color: #fff; }
+
+    @media (max-width: 850px) {
+      .workspace { flex-direction: column-reverse; height: auto; }
+      .control-panel { width: 100%; border-right: none; height: auto; }
+      .preview-area { height: 380px; }
+    }
+  </style>
+
+  <!-- Three.js + Modules -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/exporters/STLExporter.js"></script>
+  <!-- QRCode Generator Lib -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+</head>
+<body>
+
+  <header>
+    <h1>MakerKit<span>3D</span> <span class="badge">Complete Maker Hub</span></h1>
+    <span style="font-size: 0.8rem; color: var(--text-dim);">Real-Time Parametric Mesh Engine</span>
+  </header>
+
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('tab-keychain', this)">Keychain</button>
+    <button class="nav-tab" onclick="switchTab('tab-qrcode', this)">3D QR Code</button>
+    <button class="nav-tab" onclick="switchTab('tab-lithophane', this)">Lithophane Lightbox</button>
+    <button class="nav-tab" onclick="switchTab('tab-gear', this)">Spur Gear</button>
+    <button class="nav-tab" onclick="switchTab('tab-organizer', this)">Drawer Bin</button>
+    <button class="nav-tab" onclick="switchTab('tab-stand', this)">Display Stand</button>
+    <button class="nav-tab" onclick="switchTab('tab-colorswap', this)">Color-Swap Calc</button>
+  </nav>
+
+  <div class="workspace">
+    <aside class="control-panel">
+      <!-- 1. KEYCHAIN GENERATOR -->
+      <div id="tab-keychain" class="tool-group active">
+        <div class="form-group">
+          <label>Text Label</label>
+          <input type="text" id="kc-text" value="ALEX" maxlength="14" oninput="generateKeychain()" />
+        </div>
+        <div class="form-group">
+          <label>Text Height <span><span id="val-kc-theight">3.0</span> mm</span></label>
+          <input type="range" id="kc-theight" min="1" max="8" step="0.5" value="3" oninput="updateLabel(this, 'val-kc-theight'); generateKeychain();" />
+        </div>
+        <div class="form-group">
+          <label>Base Thickness <span><span id="val-kc-bthick">2.4</span> mm</span></label>
+          <input type="range" id="kc-bthick" min="1.2" max="6.0" step="0.4" value="2.4" oninput="updateLabel(this, 'val-kc-bthick'); generateKeychain();" />
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" id="kc-ring" checked onchange="generateKeychain()" /> Keyring Hole</label>
+        </div>
+        <button class="btn btn-download" onclick="exportCurrentSTL('keychain.stl')">Download .STL</button>
+      </div>
+
+      <!-- 2. 3D QR CODE PLATE -->
+      <div id="tab-qrcode" class="tool-group">
+        <div class="form-group">
+          <label>Text / URL</label>
+          <input type="text" id="qr-text" value="https://makerkit3d.com" oninput="generateQRCodeTag()" />
+        </div>
+        <div class="form-group">
+          <label>Pixel Height <span><span id="val-qr-ph">1.6</span> mm</span></label>
+          <input type="range" id="qr-ph" min="0.8" max="4.0" step="0.4" value="1.6" oninput="updateLabel(this, 'val-qr-ph'); generateQRCodeTag();" />
+        </div>
+        <div class="form-group">
+          <label>Base Plate Height <span><span id="val-qr-bh">2.0</span> mm</span></label>
+          <input type="range" id="qr-bh" min="1.2" max="4.0" step="0.4" value="2.0" oninput="updateLabel(this, 'val-qr-bh'); generateQRCodeTag();" />
+        </div>
+        <div class="info-card">High-contrast filament color recommended for scanner recognition.</div>
+        <button class="btn btn-download" onclick="exportCurrentSTL('qrcode_plate.stl')">Download .STL</button>
+      </div>
+
+      <!-- 3. LITHOPHANE LIGHTBOX -->
+      <div id="tab-lithophane" class="tool-group">
+        <div class="form-group">
+          <label>Upload Image (PNG/JPG)</label>
+          <input type="file" id="litho-file" accept="image/*" onchange="handleLithoImage(this)" />
+        </div>
+        <div class="form-group">
+          <label>Max Thickness <span><span id="val-litho-max">3.2</span> mm</span></label>
+          <input type="range" id="litho-max" min="2.0" max="5.0" step="0.2" value="3.2" oninput="updateLabel(this, 'val-litho-max'); processLitho();" />
+        </div>
+        <div class="form-group">
+          <label>Min Thickness (Light Pass) <span><span id="val-litho-min">0.8</span> mm</span></label>
+          <input type="range" id="litho-min" min="0.4" max="1.6" step="0.2" value="0.8" oninput="updateLabel(this, 'val-litho-min'); processLitho();" />
+        </div>
+        <div class="info-card">Print upright with <strong>100% Infill</strong> and white PLA for optimal light transparency.</div>
+        <button class="btn btn-download" onclick="exportCurrentSTL('lithophane.stl')">Download .STL</button>
+      </div>
+
+      <!-- 4. SPUR GEAR GENERATOR -->
+      <div id="tab-gear" class="tool-group">
+        <div class="form-group">
+          <label>Teeth Count <span><span id="val-gear-teeth">18</span></span></label>
+          <input type="range" id="gear-teeth" min="8" max="40" step="1" value="18" oninput="updateLabel(this, 'val-gear-teeth'); generateGear();" />
+        </div>
+        <div class="form-group">
+          <label>Gear Thickness <span><span id="val-gear-thick">6</span> mm</span></label>
+          <input type="range" id="gear-thick" min="3" max="25" step="1" value="6" oninput="updateLabel(this, 'val-gear-thick'); generateGear();" />
+        </div>
+        <div class="form-group">
+          <label>Shaft Bore Diameter <span><span id="val-gear-bore">5</span> mm</span></label>
+          <input type="range" id="gear-bore" min="2" max="16" step="1" value="5" oninput="updateLabel(this, 'val-gear-bore'); generateGear();" />
+        </div>
+        <button class="btn btn-download" onclick="exportCurrentSTL('spur_gear.stl')">Download .STL</button>
+      </div>
+
+      <!-- 5. DRAWER BIN GENERATOR -->
+      <div id="tab-organizer" class="tool-group">
+        <div class="form-group">
+          <label>Length (X) <span><span id="val-bin-x">60</span> mm</span></label>
+          <input type="range" id="bin-x" min="30" max="140" step="5" value="60" oninput="updateLabel(this, 'val-bin-x'); generateBin();" />
+        </div>
+        <div class="form-group">
+          <label>Width (Y) <span><span id="val-bin-y">40</span> mm</span></label>
+          <input type="range" id="bin-y" min="30" max="140" step="5" value="40" oninput="updateLabel(this, 'val-bin-y'); generateBin();" />
+        </div>
+        <div class="form-group">
+          <label>Depth (Z) <span><span id="val-bin-z">30</span> mm</span></label>
+          <input type="range" id="bin-z" min="15" max="70" step="5" value="30" oninput="updateLabel(this, 'val-bin-z'); generateBin();" />
+        </div>
+        <div class="form-group">
+          <label>Compartments</label>
+          <select id="bin-div" onchange="generateBin()">
+            <option value="1">1 Open Bin</option>
+            <option value="2">2 Split Compartments</option>
+            <option value="4">4 Grid Cells</option>
+          </select>
+        </div>
+        <button class="btn btn-download" onclick="exportCurrentSTL('drawer_bin.stl')">Download .STL</button>
+      </div>
+
+      <!-- 6. ANGLED DISPLAY STAND -->
+      <div id="tab-stand" class="tool-group">
+        <div class="form-group">
+          <label>Tilt Angle <span><span id="val-stand-ang">45</span>°</span></label>
+          <input type="range" id="stand-ang" min="15" max="75" step="5" value="45" oninput="updateLabel(this, 'val-stand-ang'); generateStand();" />
+        </div>
+        <div class="form-group">
+          <label>Slot Thickness <span><span id="val-stand-slot">12</span> mm</span></label>
+          <input type="range" id="stand-slot" min="6" max="30" step="1" value="12" oninput="updateLabel(this, 'val-stand-slot'); generateStand();" />
+        </div>
+        <div class="form-group">
+          <label>Width <span><span id="val-stand-w">40</span> mm</span></label>
+          <input type="range" id="stand-w" min="20" max="90" step="5" value="40" oninput="updateLabel(this, 'val-stand-w'); generateStand();" />
+        </div>
+        <button class="btn btn-download" onclick="exportCurrentSTL('display_stand.stl')">Download .STL</button>
+      </div>
+
+      <!-- 7. COLOR-SWAP CALCULATOR -->
+      <div id="tab-colorswap" class="tool-group">
+        <div class="form-group">
+          <label>Slicer Layer Height (mm)</label>
+          <input type="number" id="cs-layer" value="0.20" step="0.04" oninput="calcColorSwap()" />
+        </div>
+        <div class="form-group">
+          <label>Base Plate Height (mm)</label>
+          <input type="number" id="cs-base" value="2.4" step="0.2" oninput="calcColorSwap()" />
+        </div>
+        <div class="info-card" id="cs-result"></div>
+        <div class="info-card">
+          <strong>Slicer Tip:</strong> Insert a pause command (<code>M600</code>) at the start of the indicated layer to replace your filament.
+        </div>
+      </div>
+    </aside>
+
+    <main class="preview-area">
+      <div id="viewport"></div>
+    </main>
+  </div>
+
+  <canvas id="litho-canvas" style="display: none;"></canvas>
+
+  <script>
+    let scene, camera, renderer, controls;
+    let currentMeshGroup;
+    let globalFont = null;
+    let loadedImage = null;
+
+    function init3D() {
+      const container = document.getElementById('viewport');
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x070a12);
+
+      camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+      camera.position.set(0, -95, 105);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+      scene.add(ambientLight);
+
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.75);
+      dirLight.position.set(60, 60, 120);
+      scene.add(dirLight);
+
+      const grid = new THREE.GridHelper(180, 18, 0x1e293b, 0x1e293b);
+      grid.rotation.x = Math.PI / 2;
+      scene.add(grid);
+
+      currentMeshGroup = new THREE.Group();
+      scene.add(currentMeshGroup);
+
+      const loader = new THREE.FontLoader();
+      loader.load('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/helvetiker_bold.typeface.json', function (font) {
+        globalFont = font;
+        generateKeychain();
+      });
+
+      window.addEventListener('resize', onWindowResize);
+      animate();
+      calcColorSwap();
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    function onWindowResize() {
+      const container = document.getElementById('viewport');
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+
+    function clearMeshGroup() {
+      while(currentMeshGroup.children.length > 0) {
+        const obj = currentMeshGroup.children[0];
+        if (obj.geometry) obj.geometry.dispose();
+        if (obj.material) obj.material.dispose();
+        currentMeshGroup.remove(obj);
+      }
+    }
+
+    function updateLabel(elem, targetId) {
+      document.getElementById(targetId).innerText = elem.value;
+    }
+
+    // 1. KEYCHAIN
+    function generateKeychain() {
+      if (!globalFont) return;
+      clearMeshGroup();
+
+      const textVal = (document.getElementById('kc-text').value || "TAG").trim().toUpperCase();
+      const textHeight = parseFloat(document.getElementById('kc-theight').value);
+      const baseThick = parseFloat(document.getElementById('kc-bthick').value);
+      const includeHole = document.getElementById('kc-ring').checked;
+
+      const textGeo = new THREE.TextGeometry(textVal, { font: globalFont, size: 10, height: textHeight, curveSegments: 4 });
+      textGeo.computeBoundingBox();
+      const bounds = textGeo.boundingBox;
+      const textWidth = bounds.max.x - bounds.min.x;
+      const textLength = bounds.max.y - bounds.min.y;
+
+      const textMesh = new THREE.Mesh(textGeo, new THREE.MeshStandardMaterial({ color: 0x3b82f6, roughness: 0.3 }));
+      textMesh.position.set(-textWidth / 2, -textLength / 2, baseThick);
+      currentMeshGroup.add(textMesh);
+
+      const pad = 6;
+      const holeSpace = includeHole ? 14 : 0;
+      const w = textWidth + pad * 2 + holeSpace, h = Math.max(textLength + pad * 2, 20);
+      const shape = new THREE.Shape();
+      const r = 4, x = -w / 2, y = -h / 2;
+
+      shape.moveTo(x + r, y);
+      shape.lineTo(x + w - r, y);
+      shape.quadraticCurveTo(x + w, y, x + w, y + r);
+      shape.lineTo(x + w, y + h - r);
+      shape.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      shape.lineTo(x + r, y + h);
+      shape.quadraticCurveTo(x, y + h, x, y + h - r);
+      shape.lineTo(x, y + r);
+      shape.quadraticCurveTo(x, y, x + r, y);
+
+      if (includeHole) {
+        const holePath = new THREE.Path();
+        holePath.absarc(-w / 2 + 7, 0, 2.5, 0, Math.PI * 2, true);
+        shape.holes.push(holePath);
+        textMesh.position.x += holeSpace / 2;
+      }
+
+      const plateGeo = new THREE.ExtrudeGeometry(shape, { depth: baseThick, bevelEnabled: false });
+      const plateMesh = new THREE.Mesh(plateGeo, new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.4 }));
+      currentMeshGroup.add(plateMesh);
+    }
+
+    // 2. 3D QR CODE
+    function generateQRCodeTag() {
+      clearMeshGroup();
+      const val = document.getElementById('qr-text').value || "MakerKit3D";
+      const ph = parseFloat(document.getElementById('qr-ph').value);
+      const bh = parseFloat(document.getElementById('qr-bh').value);
+
+      const qr = qrcode(0, 'M');
+      qr.addData(val);
+      qr.make();
+      const count = qr.getModuleCount();
+      const scale = 1.4;
+      const size = count * scale;
+
+      // Base Plate
+      const baseGeo = new THREE.BoxGeometry(size + 6, size + 6, bh);
+      const baseMesh = new THREE.Mesh(baseGeo, new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 }));
+      baseMesh.position.set(0, 0, bh / 2);
+      currentMeshGroup.add(baseMesh);
+
+      // QR Modules
+      const pixelGeo = new THREE.BoxGeometry(scale, scale, ph);
+      const pixelMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.3 });
+      const instanced = new THREE.InstancedMesh(pixelGeo, pixelMat, count * count);
+
+      let idx = 0;
+      const dummy = new THREE.Object3D();
+      const offset = (size / 2) - (scale / 2);
+
+      for (let r = 0; r < count; r++) {
+        for (let c = 0; c < count; c++) {
+          if (qr.isDark(r, c)) {
+            dummy.position.set(c * scale - offset, -(r * scale - offset), bh + ph / 2);
+            dummy.updateMatrix();
+            instanced.setMatrixAt(idx++, dummy.matrix);
+          }
+        }
+      }
+      instanced.count = idx;
+      instanced.instanceMatrix.needsUpdate = true;
+      currentMeshGroup.add(instanced);
+    }
+
+    // 3. LITHOPHANE LIGHTBOX
+    function handleLithoImage(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const img = new Image();
+          img.onload = function () {
+            loadedImage = img;
+            processLitho();
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function processLitho() {
+      if (!loadedImage) return;
+      clearMeshGroup();
+
+      const canvas = document.getElementById('litho-canvas');
+      const ctx = canvas.getContext('2d');
+      const res = 70; // resolution for fast browser processing
+      canvas.width = res;
+      canvas.height = Math.round(res * (loadedImage.height / loadedImage.width));
+      ctx.drawImage(loadedImage, 0, 0, canvas.width, canvas.height);
+
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      const minThick = parseFloat(document.getElementById('litho-min').value);
+      const maxThick = parseFloat(document.getElementById('litho-max').value);
+
+      const geom = new THREE.PlaneGeometry(60, 60 * (canvas.height / canvas.width), canvas.width - 1, canvas.height - 1);
+      const pos = geom.attributes.position;
+
+      for (let i = 0; i < pos.count; i++) {
+        const px = i * 4;
+        const brightness = (imgData[px] * 0.299 + imgData[px + 1] * 0.587 + imgData[px + 2] * 0.114) / 255;
+        // Inverted: darker = thicker, lighter = thinner
+        const depth = minThick + (1.0 - brightness) * (maxThick - minThick);
+        pos.setZ(i, depth);
+      }
+      geom.computeVertexNormals();
+
+      const mesh = new THREE.Mesh(geom, new THREE.MeshStandardMaterial({ color: 0xeeeeee, roughness: 0.6, wireframe: false }));
+      currentMeshGroup.add(mesh);
+    }
+
+    // 4. SPUR GEAR GENERATOR
+    function generateGear() {
+      clearMeshGroup();
+      const teeth = parseInt(document.getElementById('gear-teeth').value);
+      const thickness = parseFloat(document.getElementById('gear-thick').value);
+      const bore = parseFloat(document.getElementById('gear-bore').value);
+
+      const outerR = teeth * 1.5;
+      const innerR = outerR - 4;
+      const shape = new THREE.Shape();
+
+      for (let i = 0; i < teeth; i++) {
+        const a1 = (i / teeth) * Math.PI * 2;
+        const a2 = ((i + 0.25) / teeth) * Math.PI * 2;
+        const a3 = ((i + 0.5) / teeth) * Math.PI * 2;
+        const a4 = ((i + 0.75) / teeth) * Math.PI * 2;
+
+        const x1 = Math.cos(a1) * innerR, y1 = Math.sin(a1) * innerR;
+        const x2 = Math.cos(a2) * outerR, y2 = Math.sin(a2) * outerR;
+        const x3 = Math.cos(a3) * outerR, y3 = Math.sin(a3) * outerR;
+        const x4 = Math.cos(a4) * innerR, y4 = Math.sin(a4) * innerR;
+
+        if (i === 0) shape.moveTo(x1, y1);
+        else shape.lineTo(x1, y1);
+        shape.lineTo(x2, y2);
+        shape.lineTo(x3, y3);
+        shape.lineTo(x4, y4);
+      }
+
+      // Bore Hole
+      const hole = new THREE.Path();
+      hole.absarc(0, 0, bore / 2, 0, Math.PI * 2, true);
+      shape.holes.push(hole);
+
+      const geom = new THREE.ExtrudeGeometry(shape, { depth: thickness, bevelEnabled: false });
+      const mesh = new THREE.Mesh(geom, new THREE.MeshStandardMaterial({ color: 0x0ea5e9, roughness: 0.4 }));
+      currentMeshGroup.add(mesh);
+    }
+
+    // 5. DRAWER BIN
+    function generateBin() {
+      clearMeshGroup();
+      const length = parseFloat(document.getElementById('bin-x').value);
+      const width = parseFloat(document.getElementById('bin-y').value);
+      const height = parseFloat(document.getElementById('bin-z').value);
+      const divType = parseInt(document.getElementById('bin-div').value);
+      const wall = 1.6;
+
+      const outerGeo = new THREE.BoxGeometry(length, width, height);
+      const outer = new THREE.Mesh(outerGeo, new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.5 }));
+      outer.position.set(0, 0, height / 2);
+      currentMeshGroup.add(outer);
+
+      const cavMat = new THREE.MeshStandardMaterial({ color: 0x064e3b, roughness: 0.6 });
+      const cavityH = height - wall;
+      
+      if (divType === 1) {
+        const cav = new THREE.Mesh(new THREE.BoxGeometry(length - wall * 2, width - wall * 2, cavityH), cavMat);
+        cav.position.set(0, 0, height / 2 + wall / 2);
+        currentMeshGroup.add(cav);
+      } else if (divType === 2) {
+        const halfL = (length - wall * 3) / 2;
+        const cav1 = new THREE.Mesh(new THREE.BoxGeometry(halfL, width - wall * 2, cavityH), cavMat);
+        cav1.position.set(-length / 4, 0, height / 2 + wall / 2);
+        const cav2 = cav1.clone();
+        cav2.position.x = length / 4;
+        currentMeshGroup.add(cav1, cav2);
+      } else {
+        const halfL = (length - wall * 3) / 2;
+        const halfW = (width - wall * 3) / 2;
+        for (let ix of [-1, 1]) {
+          for (let iy of [-1, 1]) {
+            const cell = new THREE.Mesh(new THREE.BoxGeometry(halfL, halfW, cavityH), cavMat);
+            cell.position.set(ix * (halfL / 2 + wall / 2), iy * (halfW / 2 + wall / 2), height / 2 + wall / 2);
+            currentMeshGroup.add(cell);
+          }
+        }
+      }
+    }
+
+    // 6. ANGLED STAND
+    function generateStand() {
+      clearMeshGroup();
+      const angleDeg = parseFloat(document.getElementById('stand-ang').value);
+      const slotThick = parseFloat(document.getElementById('stand-slot').value);
+      const standWidth = parseFloat(document.getElementById('stand-w').value);
+      const rad = (angleDeg * Math.PI) / 180;
+
+      const shape = new THREE.Shape();
+      shape.moveTo(0, 0);
+      shape.lineTo(50, 0);
+      shape.lineTo(50, 8);
+      shape.lineTo(20, 8);
+      shape.lineTo(20 - Math.sin(rad) * 15, 8 + Math.cos(rad) * 15);
+      shape.lineTo(15 - Math.sin(rad) * (15 + slotThick), 8 + Math.cos(rad) * (15 + slotThick));
+      shape.lineTo(0, 8);
+      shape.closePath();
+
+      const geom = new THREE.ExtrudeGeometry(shape, { depth: standWidth, bevelEnabled: false });
+      geom.center();
+      const mesh = new THREE.Mesh(geom, new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.4 }));
+      mesh.rotation.x = Math.PI / 2;
+      mesh.position.z = standWidth / 2;
+      currentMeshGroup.add(mesh);
+    }
+
+    // 7. COLOR-SWAP CALCULATOR
+    function calcColorSwap() {
+      const layerH = parseFloat(document.getElementById('cs-layer').value) || 0.2;
+      const baseH = parseFloat(document.getElementById('cs-base').value) || 2.4;
+      const swapLayer = Math.floor(baseH / layerH) + 1;
+      const swapHeight = (swapLayer - 1) * layerH;
+
+      document.getElementById('cs-result').innerHTML = `
+        <div style="font-size: 1.05rem; color: #fff; margin-bottom: 0.4rem;">
+          Pause Printer at: <strong>Layer ${swapLayer}</strong>
+        </div>
+        <div>Exact Z-Height: <strong>${swapHeight.toFixed(2)} mm</strong></div>
+        <div style="margin-top: 0.35rem;">Command: <code>M600</code></div>
+      `;
+    }
+
+    // EXPORT DIRECT TO BINARY STL
+    function exportCurrentSTL(filename) {
+      const exporter = new THREE.STLExporter();
+      const stlString = exporter.parse(currentMeshGroup, { binary: true });
+      const blob = new Blob([stlString], { type: 'application/octet-stream' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    // SWITCH TABS
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tool-group').forEach(g => g.classList.remove('active'));
+
+      btn.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+
+      if (tabId === 'tab-keychain') generateKeychain();
+      if (tabId === 'tab-qrcode') generateQRCodeTag();
+      if (tabId === 'tab-lithophane') processLitho();
+      if (tabId === 'tab-gear') generateGear();
+      if (tabId === 'tab-organizer') generateBin();
+      if (tabId === 'tab-stand') generateStand();
+    }
+
+    window.onload = init3D;
+  </script>
+  <footer style="background: #151d30; border-top: 1px solid #243049; padding: 2rem 1.5rem; text-align: center; font-size: 0.85rem; color: #94a3b8;">
+    <div style="margin-bottom: 0.8rem;">
+      <a href="guides/slicer-settings.html" style="color: #3b82f6; text-decoration: none; margin: 0 0.8rem;">Slicer Optimization Guide</a> •
+      <a href="guides/color-swap.html" style="color: #3b82f6; text-decoration: none; margin: 0 0.8rem;">Color Swap Tutorial</a> •
+      <a href="legal/privacy.html" style="color: #3b82f6; text-decoration: none; margin: 0 0.8rem;">Privacy Policy</a> •
+      <a href="legal/terms.html" style="color: #3b82f6; text-decoration: none; margin: 0 0.8rem;">Terms & Commercial License</a> •
+      <a href="legal/contact.html" style="color: #3b82f6; text-decoration: none; margin: 0 0.8rem;">Contact Us</a>
+    </div>
+    <p>© 2026 MakerKit3D. In-browser parametric CAD utilities for makers. Free & Open Access.</p>
+  </footer>
+
+
+
+</body>
+</html>
