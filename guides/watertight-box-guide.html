@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why Your 3D Printed Containers Leak: Wall Thickness & Slicing Realities</title>
+  <meta name="description" content="A real-world test on printing watertight, functional plastic boxes. Perimeter line overlapping, flow rates, and wall thickness benchmarks." />
+  <link rel="canonical" href="https://stlkit3d.com/guides/watertight-box-guide.html" />
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.75;
+      padding: 40px 16px;
+    }
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 36px 28px;
+    }
+    h1 {
+      font-size: 1.85rem;
+      color: #38bdf8;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+    .meta-byline {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 12px;
+    }
+    h2 {
+      font-size: 1.25rem;
+      color: #f1f5f9;
+      margin-top: 32px;
+      margin-bottom: 12px;
+    }
+    p {
+      color: #cbd5e1;
+      font-size: 0.98rem;
+      margin-bottom: 18px;
+    }
+    ul, ol {
+      padding-left: 20px;
+      margin-bottom: 18px;
+      color: #cbd5e1;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    code {
+      background-color: #0b0f19;
+      color: #38bdf8;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-family: Menlo, Consolas, Monaco, monospace;
+    }
+    .note-box {
+      background-color: rgba(56, 189, 248, 0.06);
+      border-left: 3px solid #38bdf8;
+      padding: 14px 18px;
+      border-radius: 6px;
+      margin: 24px 0;
+    }
+    .note-box p {
+      margin: 0;
+      color: #e2e8f0;
+      font-size: 0.92rem;
+    }
+    a {
+      color: #38bdf8;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      text-decoration: none;
+    }
+    .back-btn:hover {
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html" class="back-btn">← Back to STLKit3D Generators</a>
+    
+    <h1>Why Your 3D Printed Containers Leak: Wall Thickness & Slicing Realities</h1>
+    <div class="meta-byline">
+      <span>Workshop Notes</span>
+      <span>•</span>
+      <span>Hydrostatic Leak Benchmarks</span>
+      <span>•</span>
+      <span>Updated Fall 2026</span>
+    </div>
+
+    <p>Printing a box seems like the simplest job you can throw at an FDM printer. You sketch four walls, drop it onto the bed, and let it run. But if you've ever tried using that box to hold liquids, hardware screws, or delicate electronics outdoors, you quickly realize how porous extruded plastic really is.</p>
+
+    <p>Under a microscope, standard 3D prints aren't solid solids—they are stacked micro-tubes. Tiny microscopic pinholes between layer boundaries let water sweat out through the walls within hours. Here is how to eliminate wall delamination and micro-leaks without resorting to messy resin coats.</p>
+
+    <div class="note-box">
+      <p><strong>Need clean dimensions right now?</strong> You can dial in your exact internal length, width, and shell thickness in seconds with our <a href="../index.html">Parametric Storage Box Generator</a> without opening CAD software.</p>
+    </div>
+
+    <h2>1. Wall Thickness vs Nozzle Line Multiples</h2>
+    <p>The most common design blunder is setting arbitrary wall thicknesses in CAD (like 1.5 mm or 2.5 mm) when using a standard 0.4 mm nozzle. Slicers struggle with non-multiple numbers and either leave hollow gaps or generate jerky gap-fill moves that cause under-extrusion.</p>
+    <ul>
+      <li><strong>For light organizers:</strong> <code>1.2 mm</code> wall thickness (exactly 3 perimeter passes at 0.40 mm line width).</li>
+      <li><strong>For rigid hardware bins:</strong> <code>2.0 mm</code> wall thickness (exactly 4 to 5 passes at 0.45 mm line width).</li>
+      <li><strong>For water retention:</strong> Never go below <code>2.4 mm</code> solid plastic. If water has to navigate through six fused perimeters, surface tension stops capillary sweating completely.</li>
+    </ul>
+
+    <h2>2. Kill the Infill, Maximize the Walls</h2>
+    <p>Whenever you need structural impact resistance on a utility container, infill is mostly a waste of time and travel moves. A box with 2 perimeters and 40% infill will crack along layer lines much faster than a box with 4 solid perimeters and 0% infill—while consuming almost the exact same amount of filament.</p>
+    <p>In your slicer, bump <strong>Wall Loops / Perimeters</strong> to <code>4</code> or <code>5</code>. This produces solid, continuous filament paths around the perimeter corners where drop impacts concentrate stress.</p>
+
+    <h2>3. Bump Flow Rate and Nozzle Temperature</h2>
+    <p>If you're testing a tub for true water tightness, standard aesthetic print settings won't cut it. You need maximum thermal fusion between overlapping paths:</p>
+    <ol>
+      <li><strong>Hotter Nozzle:</strong> Bump your normal printing temperature by <code>5°C to 10°C</code> (e.g., 215°C for standard PLA or 245°C for PETG). Hotter plastic stays viscous longer and fuses adjacent tracks together seamlessly.</li>
+      <li><strong>Flow Rate (Extrusion Multiplier):</strong> Set flow to <code>102% - 104%</code>. That slight intentional over-extrusion forces plastic into the micro-cavities between round bead cross-sections.</li>
+      <li><strong>Line Width:</strong> In OrcaSlicer or PrusaSlicer, manually set your outer and inner wall line width to <code>0.45 mm</code> or <code>0.50 mm</code> (even on a 0.4 mm brass nozzle). The nozzle flat will iron down the bead into a wide, flat squish.</li>
+    </ol>
+
+    <h2>4. Filament Choice: PLA vs PETG vs ABS</h2>
+    <p>For chemical and water resistance, material selection matters:</p>
+    <ul>
+      <li><strong>PETG:</strong> The undisputed king for airtight or watertight boxes. Its natural layer-to-layer adhesion is phenomenal, and it doesn't degrade from standing moisture.</li>
+      <li><strong>PLA:</strong> Surprisingly good for indoor dry bins, but prone to micro-fractures under long-term hydrostatic pressure.</li>
+      <li><strong>ABS:</strong> Great if you plan to vapor-smooth with acetone. An acetone vapor chamber literally melts the outer layer lines together into a single glossy, non-porous shell.</li>
+    </ul>
+
+    <h2>Quick Takeaway</h2>
+    <p>Calculate your shell thickness as a clean multiple of your nozzle width, run 4+ perimeters, increase extrusion temp by 5°C, and bump flow by 2%. You can grab parametric container dimensions tailored to your shelf using the <a href="../index.html">STLKit3D Utility Hub</a>.</p>
+  </div>
+</body>
+</html>
