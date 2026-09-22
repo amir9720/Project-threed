@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to 3D Print Crisp Small Text & Embossed Tags Without Blobs</title>
+  <meta name="description" content="A workshop guide to printing legible, sharp typography on custom keychains and labels using standard 0.4mm brass nozzles." />
+  <link rel="canonical" href="https://stlkit3d.com/guides/keychain-text-guide.html" />
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.75;
+      padding: 40px 16px;
+    }
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 36px 28px;
+    }
+    h1 {
+      font-size: 1.85rem;
+      color: #38bdf8;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+    .meta-byline {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 12px;
+    }
+    h2 {
+      font-size: 1.25rem;
+      color: #f1f5f9;
+      margin-top: 32px;
+      margin-bottom: 12px;
+    }
+    p {
+      color: #cbd5e1;
+      font-size: 0.98rem;
+      margin-bottom: 18px;
+    }
+    ul, ol {
+      padding-left: 20px;
+      margin-bottom: 18px;
+      color: #cbd5e1;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    code {
+      background-color: #0b0f19;
+      color: #38bdf8;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-family: Menlo, Consolas, Monaco, monospace;
+    }
+    .note-box {
+      background-color: rgba(56, 189, 248, 0.06);
+      border-left: 3px solid #38bdf8;
+      padding: 14px 18px;
+      border-radius: 6px;
+      margin: 24px 0;
+    }
+    .note-box p {
+      margin: 0;
+      color: #e2e8f0;
+      font-size: 0.92rem;
+    }
+    a {
+      color: #38bdf8;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      text-decoration: none;
+    }
+    .back-btn:hover {
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html" class="back-btn">← Back to STLKit3D Generators</a>
+    
+    <h1>How to 3D Print Crisp Small Text & Embossed Tags Without Blobs</h1>
+    <div class="meta-byline">
+      <span>Workshop Notes</span>
+      <span>•</span>
+      <span>Typography & Slicing Benchmarks</span>
+      <span>•</span>
+      <span>Updated Fall 2026</span>
+    </div>
+
+    <p>Printing small names, serial numbers, or phone tags on keychains is notoriously frustrating. You slice a clean 3D font, but when the print finishes, letters like <em>'e'</em>, <em>'a'</em>, and <em>'o'</em> are completely filled with melted plastic blobs, and dot-islands on lowercase <em>'i'</em> tear off the bed.</p>
+
+    <p>A standard 0.40 mm nozzle is essentially a hot glue gun tracing paths. If your text stroke width is smaller than the extruded bead diameter, your slicer is forced to make aggressive compromises. Here is how to achieve clean typography without switching to a tiny 0.20 mm nozzle.</p>
+
+    <div class="note-box">
+      <p><strong>Want pre-scaled, manifold text geometry?</strong> You can type your text, preview live extrusion depths, and export ready-to-print STLs instantly with our <a href="../index.html">Keychain Tag Generator</a>.</p>
+    </div>
+
+    <h2>1. The Arachne Engine: Your Secret Weapon</h2>
+    <p>Older slicer algorithms used classic constant line widths (e.g., rigid 0.45 mm paths). When encountering thin serifs or sharp character corners, they would leave hollow gaps or omit entire strokes.</p>
+    <p>Always enable the <strong>Arachne Perimeter Generator</strong> in PrusaSlicer, Bambu Studio, or OrcaSlicer:</p>
+    <ul>
+      <li>Arachne dynamically thins down extrusion width (down to ~0.25 mm) on the fly to fit narrow character stems.</li>
+      <li>It prevents ugly gap-fill vibration shakes that cause filament fuzz around small lettering.</li>
+    </ul>
+
+    <h2>2. Embossed vs Debossed: Choose the Right Face</h2>
+    <p>How you orient typography determines how clean it looks:</p>
+    <ul>
+      <li><strong>Raised (Embossed) Text on Top:</strong> Best for dual-color swaps. Ensure letter height is at least <code>0.8 mm</code> to <code>1.2 mm</code> above the base. This gives the printer 4 clean layers to establish full color contrast before finishing.</li>
+      <li><strong>Recessed (Debossed) Text:</strong> Looks sleek and never snags inside pockets. Set pocket depth to <code>0.6 mm - 0.8 mm</code>. Avoid making debossed pockets deeper than 1.0 mm, as dust and pocket lint accumulate quickly.</li>
+      <li><strong>Face-Down on Textured PEI:</strong> Printing raised text face-down against a textured bed produces a stunning matte finish, but requires perfect first-layer calibration to prevent elephant's foot from closing small loops.</li>
+    </ul>
+
+    <h2>3. Retraction and Temperature Tuning</h2>
+    <p>Because printing text requires hundreds of rapid retractions between tiny letter perimeters, thermal oozing is your worst enemy:</p>
+    <ol>
+      <li><strong>Drop Nozzle Temp by 5°C:</strong> Running slightly cooler increases filament viscosity, cutting down the micro-strings that drag across letter gaps.</li>
+      <li><strong>Enable Z-Hop on Travel:</strong> Set Z-hop to <code>0.2 mm - 0.4 mm</code>. When the hot nozzle jumps between letters, a tiny vertical lift prevents it from knocking over fragile, freestanding strokes.</li>
+      <li><strong>Slow Down Outer Walls:</strong> Drop your small perimeter / outer wall speed to <code>25 - 30 mm/s</code>. Sharp text corners need extra cooling time to set without rounding off.</li>
+    </ol>
+
+    <h2>4. Font Geometry Rules</h2>
+    <p>Fine-serif script fonts look great in 2D graphic design, but fail miserably in extrusion printing. Bold, sans-serif typefaces (like Arial Black, Impact, or bold Grotesque fonts) provide the necessary stroke mass so plastic lines bond securely to the underlying base plate.</p>
+
+    <h2>Summary</h2>
+    <p>Turn on Arachne perimeter generation, slow down outer wall speed to 25 mm/s, add a subtle Z-hop, and use bold sans-serif text. You can configure balanced keychain dimensions and export clean STLs directly on the <a href="../index.html">STLKit3D Generator Hub</a>.</p>
+  </div>
+</body>
+</html>
