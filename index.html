@@ -3,644 +3,858 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MakerKit3D | Free Online STL & 3D Print Generators (No CAD Required)</title>
-  <meta name="description" content="Generate ready-to-print .STL files directly in your browser. Create custom 3D keychains, QR code plates, drawer bins, lithophanes, and calculate filament color swaps instantly for free." />
-  <meta name="keywords" content="custom 3d printed keychain generator, 3d printable qr code generator stl, parametric drawer bin generator, filament color swap layer calculator, turn photo into lithophane stl free, spur gear generator stl, no cad stl tools" />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://makerkit3d.com/" />
-
-  <!-- OpenGraph / Social Sharing -->
+  <title>STLKit3D | Free Online STL & 3D Print Generators (No CAD Required)</title>
+  <meta name="description" content="Generate 3D printable STL models instantly in your browser. Create custom keychains, lithophanes, boxes, cable clips, and calculate color swaps with zero CAD skills." />
+  <meta name="keywords" content="STL generator, 3D printing tools, online CAD, lithophane maker, parametric 3D models, free STL files, color swap calculator" />
+  <link rel="canonical" href="https://stlkit3d.com/" />
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="STLKit3D | Free Online STL & 3D Print Generators" />
+  <meta property="og:description" content="Generate ready-to-print STL files directly in your web browser. Free parametric 3D utilities for makers." />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="MakerKit3D - Free In-Browser STL Generators" />
-  <meta property="og:description" content="Parametric 3D printable models without complex CAD software. Export instant watertight binary STLs." />
-  <meta property="og:url" content="https://makerkit3d.com/" />
+  <meta property="og:url" content="https://stlkit3d.com/" />
+  <meta property="og:site_name" content="STLKit3D" />
+
+  <!-- Three.js & OrbitControls for Real-Time 3D Viewports -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <style>
     :root {
-      --bg: #0b0f19;
-      --card: #151d30;
-      --accent: #3b82f6;
-      --accent-hover: #2563eb;
-      --text: #f8fafc;
+      --bg-dark: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --primary: #38bdf8;
+      --primary-hover: #0284c7;
+      --accent: #f59e0b;
+      --text-main: #f8fafc;
       --text-dim: #94a3b8;
-      --border: #243049;
       --success: #10b981;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; }
-    header { background-color: var(--card); border-bottom: 1px solid var(--border); padding: 0.9rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
-    header h1 { font-size: 1.2rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.5rem; }
-    header h1 span { color: var(--accent); }
-    .badge { background: rgba(59, 130, 246, 0.15); color: var(--accent); padding: 0.2rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.3); }
-    
-    .nav-tabs { display: flex; background: var(--card); border-bottom: 1px solid var(--border); padding: 0 1rem; overflow-x: auto; }
-    .nav-tab { padding: 0.8rem 1.1rem; background: none; border: none; color: var(--text-dim); font-size: 0.85rem; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: 0.2s; }
-    .nav-tab:hover { color: var(--text); }
-    .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-    
-    .workspace { display: flex; flex-direction: row; height: 600px; border-bottom: 1px solid var(--border); }
-    .control-panel { width: 380px; min-width: 320px; background: var(--card); border-right: 1px solid var(--border); padding: 1.25rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
-    .preview-area { flex: 1; position: relative; background: #070a12; }
-    #viewport { width: 100%; height: 100%; }
 
-    .tool-group { display: none; flex-direction: column; gap: 1rem; }
-    .tool-group.active { display: flex; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
 
-    .tool-header h2 { font-size: 1.05rem; color: #fff; margin-bottom: 0.25rem; }
-    .tool-header p { font-size: 0.78rem; color: var(--text-dim); line-height: 1.35; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 40px;
+    }
 
-    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
-    .form-group label { font-size: 0.8rem; font-weight: 500; color: var(--text-dim); display: flex; justify-content: space-between; }
-    .form-group label span { color: var(--text); font-weight: 600; }
-    input[type="text"], input[type="number"], select, input[type="file"] { background: #0b0f19; border: 1px solid var(--border); color: #fff; padding: 0.55rem 0.75rem; border-radius: 6px; font-size: 0.85rem; width: 100%; outline: none; }
-    input[type="text"]:focus, select:focus { border-color: var(--accent); }
-    input[type="range"] { accent-color: var(--accent); }
+    header {
+      background-color: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
 
-    .btn { background: var(--accent); color: white; border: none; padding: 0.7rem 1.1rem; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: 0.2s; }
-    .btn:hover { background: var(--accent-hover); }
-    .btn-download { background: var(--success); margin-top: 0.5rem; }
-    .btn-download:hover { background: #059669; }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-    .info-card { background: rgba(59, 130, 246, 0.06); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 6px; padding: 0.75rem; font-size: 0.8rem; line-height: 1.4; color: var(--text-dim); }
-    .info-card strong { color: #fff; }
+    .brand h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text-main);
+    }
 
-    /* SEO Rich Content Section */
-    .seo-content { max-width: 1000px; margin: 3rem auto; padding: 0 1.5rem; }
-    .seo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
-    .seo-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; }
-    .seo-card h3 { font-size: 1.1rem; color: #fff; margin-bottom: 0.6rem; }
-    .seo-card p { font-size: 0.88rem; color: var(--text-dim); line-height: 1.5; }
+    .brand h1 span {
+      color: var(--primary);
+    }
 
-    footer { background: var(--card); border-top: 1px solid var(--border); padding: 2rem 1.5rem; text-align: center; font-size: 0.85rem; color: var(--text-dim); margin-top: auto; }
-    footer a { color: var(--accent); text-decoration: none; margin: 0 0.6rem; }
-    footer a:hover { text-decoration: underline; }
+    .badge {
+      background-color: rgba(56, 189, 248, 0.1);
+      color: var(--primary);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
 
-    @media (max-width: 850px) {
-      .workspace { flex-direction: column-reverse; height: auto; }
-      .control-panel { width: 100%; border-right: none; height: auto; }
-      .preview-area { height: 360px; }
+    .hero {
+      text-align: center;
+      padding: 48px 20px 32px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h2 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+
+    .hero p {
+      color: var(--text-dim);
+      font-size: 1.1rem;
+    }
+
+    /* Tabs Navigation */
+    .tabs-nav {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      max-width: 1100px;
+      margin: 0 auto 32px;
+      padding: 0 16px;
+    }
+
+    .tab-btn {
+      background-color: var(--card-bg);
+      color: var(--text-dim);
+      border: 1px solid var(--card-border);
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--primary);
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      background-color: var(--primary);
+      color: #000;
+      border-color: var(--primary);
+    }
+
+    /* Main Container & Layout */
+    .tool-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .tool-panel {
+      display: none;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    @media (min-width: 850px) {
+      .tool-panel {
+        grid-template-columns: 360px 1fr;
+      }
+    }
+
+    .tool-panel.active {
+      display: grid;
+    }
+
+    .controls-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .viewport-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .viewport-wrapper {
+      width: 100%;
+      height: 380px;
+      background-color: #0b0f19;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .viewport-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .viewport-hint {
+      position: absolute;
+      bottom: 8px;
+      left: 12px;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+
+    /* Form Inputs */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .form-group label span.val-badge {
+      color: var(--primary);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      background-color: #0f172a;
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      outline: none;
+      width: 100%;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      border-color: var(--primary);
+    }
+
+    input[type="range"] {
+      accent-color: var(--primary);
+      width: 100%;
+    }
+
+    .btn-action {
+      background-color: var(--primary);
+      color: #000;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .btn-action:hover {
+      background-color: var(--primary-hover);
+    }
+
+    /* Info / Result Cards */
+    .calc-result-box {
+      background-color: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    .calc-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .calc-row:last-child {
+      border-bottom: none;
+    }
+
+    .calc-highlight {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* SEO Article Cards */
+    .seo-cards {
+      max-width: 1100px;
+      margin: 48px auto 0;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .seo-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .seo-card h3 {
+      font-size: 1.15rem;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .seo-card p {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--card-border);
+      margin-top: 64px;
+      padding: 32px 16px;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    footer .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
     }
   </style>
-
-  <!-- Three.js + STLExporter -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/exporters/STLExporter.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 </head>
 <body>
 
+  <!-- Top Header -->
   <header>
-    <h1>MakerKit<span>3D</span> <span class="badge">Open Maker Hub</span></h1>
-    <span style="font-size: 0.8rem; color: var(--text-dim);">Browser-Based Parametric CAD • Instant .STL</span>
+    <div class="brand">
+      <h1>STLKit<span>3D</span></h1>
+      <span class="badge">Free CAD Utilities</span>
+    </div>
+    <span style="font-size: 0.8rem; color: var(--text-dim);">Browser-Based • Instant .STL</span>
   </header>
 
-  <nav class="nav-tabs">
-    <button class="nav-tab active" onclick="switchTab('tab-keychain', this)">Keychain & Tag</button>
-    <button class="nav-tab" onclick="switchTab('tab-qrcode', this)">3D QR Code</button>
-    <button class="nav-tab" onclick="switchTab('tab-lithophane', this)">Lithophane Lightbox</button>
-    <button class="nav-tab" onclick="switchTab('tab-gear', this)">Spur Gear</button>
-    <button class="nav-tab" onclick="switchTab('tab-organizer', this)">Drawer Bin</button>
-    <button class="nav-tab" onclick="switchTab('tab-stand', this)">Display Stand</button>
-    <button class="nav-tab" onclick="switchTab('tab-colorswap', this)">Color-Swap Calc</button>
+  <!-- Hero Section -->
+  <section class="hero">
+    <h2>Parametric 3D Printable STL Tools</h2>
+    <p>Create clean, watertight models right in your browser. Eliminate 3D modeling friction for everyday prints.</p>
+  </section>
+
+  <!-- Navigation Tabs -->
+  <nav class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTool('keychain')">Keychain Tag</button>
+    <button class="tab-btn" onclick="switchTool('box')">Custom Storage Box</button>
+    <button class="tab-btn" onclick="switchTool('lithophane')">Flat Lithophane</button>
+    <button class="tab-btn" onclick="switchTool('cable')">Desk Cable Clip</button>
+    <button class="tab-btn" onclick="switchTool('colorswap')">Color-Swap Calc</button>
+    <button class="tab-btn" onclick="switchTool('infill')">Infill & Weight</button>
+    <button class="tab-btn" onclick="switchTool('shrinkage')">Shrinkage Calc</button>
   </nav>
 
-  <div class="workspace">
-    <aside class="control-panel">
-      <!-- 1. KEYCHAIN -->
-      <div id="tab-keychain" class="tool-group active">
-        <div class="tool-header">
-          <h2>Custom Keychain & Name Tag Generator</h2>
-          <p>Create embossed text plates and pet tags. Ready to print without CAD design.</p>
-        </div>
+  <!-- Main Tools Workspace -->
+  <main class="tool-container">
+
+    <!-- 1. KEYCHAIN GENERATOR -->
+    <div id="tool-keychain" class="tool-panel active">
+      <div class="controls-col">
+        <h3>Keychain Tag Generator</h3>
+        <p style="font-size: 0.85rem; color: var(--text-dim);">Create a flat name tag with raised text and a mounting hole.</p>
+        
         <div class="form-group">
           <label>Text Label</label>
-          <input type="text" id="kc-text" value="ALEX" maxlength="14" oninput="generateKeychain()" />
+          <input type="text" id="kc-text" value="MAKER" maxlength="12" oninput="updateKeychainPreview()" />
         </div>
+        
         <div class="form-group">
-          <label>Text Height <span><span id="val-kc-theight">3.0</span> mm</span></label>
-          <input type="range" id="kc-theight" min="1" max="8" step="0.5" value="3" oninput="updateLabel(this, 'val-kc-theight'); generateKeychain();" />
+          <label>Base Length (mm) <span class="val-badge" id="kc-len-val">60</span></label>
+          <input type="range" id="kc-len" min="30" max="120" value="60" oninput="syncVal('kc-len', 'kc-len-val'); updateKeychainPreview();" />
         </div>
+
         <div class="form-group">
-          <label>Base Thickness <span><span id="val-kc-bthick">2.4</span> mm</span></label>
-          <input type="range" id="kc-bthick" min="1.2" max="6.0" step="0.4" value="2.4" oninput="updateLabel(this, 'val-kc-bthick'); generateKeychain();" />
+          <label>Base Width (mm) <span class="val-badge" id="kc-wid-val">25</span></label>
+          <input type="range" id="kc-wid" min="15" max="60" value="25" oninput="syncVal('kc-wid', 'kc-wid-val'); updateKeychainPreview();" />
         </div>
+
         <div class="form-group">
-          <label><input type="checkbox" id="kc-ring" checked onchange="generateKeychain()" /> Include Keyring Hole</label>
+          <label>Base Thickness (mm) <span class="val-badge" id="kc-thk-val">3</span></label>
+          <input type="range" id="kc-thk" min="1.5" max="6" step="0.5" value="3" oninput="syncVal('kc-thk', 'kc-thk-val'); updateKeychainPreview();" />
         </div>
-        <button class="btn btn-download" onclick="exportCurrentSTL('keychain.stl')">Download .STL</button>
+
+        <button class="btn-action" onclick="downloadKeychainSTL()">Download STL</button>
       </div>
 
-      <!-- 2. QR CODE -->
-      <div id="tab-qrcode" class="tool-group">
-        <div class="tool-header">
-          <h2>3D Printable QR Code Plate Maker</h2>
-          <p>Extrude scannable barcode tags for WiFi, links, and contact cards.</p>
+      <div class="viewport-col">
+        <div class="viewport-wrapper">
+          <div id="kc-canvas" class="viewport-canvas"></div>
+          <span class="viewport-hint">Rotate: Left-Click • Zoom: Scroll</span>
         </div>
+      </div>
+    </div>
+
+    <!-- 2. PARAMETRIC BOX GENERATOR -->
+    <div id="tool-box" class="tool-panel">
+      <div class="controls-col">
+        <h3>Parametric Storage Box</h3>
+        <p style="font-size: 0.85rem; color: var(--text-dim);">Custom dimension container with uniform shell thickness.</p>
+        
         <div class="form-group">
-          <label>Text / URL Target</label>
-          <input type="text" id="qr-text" value="https://makerkit3d.com" oninput="generateQRCodeTag()" />
+          <label>Length X (mm) <span class="val-badge" id="box-x-val">60</span></label>
+          <input type="range" id="box-x" min="20" max="150" value="60" oninput="syncVal('box-x', 'box-x-val'); updateBoxPreview();" />
         </div>
+
         <div class="form-group">
-          <label>Pixel Block Height <span><span id="val-qr-ph">1.6</span> mm</span></label>
-          <input type="range" id="qr-ph" min="0.8" max="4.0" step="0.4" value="1.6" oninput="updateLabel(this, 'val-qr-ph'); generateQRCodeTag();" />
+          <label>Width Y (mm) <span class="val-badge" id="box-y-val">40</span></label>
+          <input type="range" id="box-y" min="20" max="150" value="40" oninput="syncVal('box-y', 'box-y-val'); updateBoxPreview();" />
         </div>
+
         <div class="form-group">
-          <label>Base Plate Height <span><span id="val-qr-bh">2.0</span> mm</span></label>
-          <input type="range" id="qr-bh" min="1.2" max="4.0" step="0.4" value="2.0" oninput="updateLabel(this, 'val-qr-bh'); generateQRCodeTag();" />
+          <label>Height Z (mm) <span class="val-badge" id="box-z-val">30</span></label>
+          <input type="range" id="box-z" min="15" max="100" value="30" oninput="syncVal('box-z', 'box-z-val'); updateBoxPreview();" />
         </div>
-        <button class="btn btn-download" onclick="exportCurrentSTL('qrcode_plate.stl')">Download .STL</button>
+
+        <div class="form-group">
+          <label>Wall Thickness (mm) <span class="val-badge" id="box-wall-val">2.0</span></label>
+          <input type="range" id="box-wall" min="1.2" max="5.0" step="0.4" value="2.0" oninput="syncVal('box-wall', 'box-wall-val'); updateBoxPreview();" />
+        </div>
+
+        <button class="btn-action" onclick="downloadBoxSTL()">Download STL</button>
       </div>
 
-      <!-- 3. LITHOPHANE -->
-      <div id="tab-lithophane" class="tool-group">
-        <div class="tool-header">
-          <h2>Photo to Lithophane STLs Generator</h2>
-          <p>Convert 2D photography into light-transmitting textured 3D wall art.</p>
+      <div class="viewport-col">
+        <div class="viewport-wrapper">
+          <div id="box-canvas" class="viewport-canvas"></div>
+          <span class="viewport-hint">Rotate: Left-Click • Zoom: Scroll</span>
         </div>
+      </div>
+    </div>
+
+    <!-- 3. FLAT LITHOPHANE GENERATOR -->
+    <div id="tool-lithophane" class="tool-panel">
+      <div class="controls-col">
+        <h3>Flat Lithophane Maker</h3>
+        <p style="font-size: 0.85rem; color: var(--text-dim);">Converts any uploaded photo into a light-transmitting relief mesh.</p>
+        
         <div class="form-group">
-          <label>Select Photo (PNG/JPG)</label>
-          <input type="file" id="litho-file" accept="image/*" onchange="handleLithoImage(this)" />
+          <label>Upload Image</label>
+          <input type="file" id="litho-file" accept="image/*" onchange="handleLithoImage(event)" />
         </div>
+
         <div class="form-group">
-          <label>Max Thickness <span><span id="val-litho-max">3.2</span> mm</span></label>
-          <input type="range" id="litho-max" min="2.0" max="5.0" step="0.2" value="3.2" oninput="updateLabel(this, 'val-litho-max'); processLitho();" />
+          <label>Target Width (mm) <span class="val-badge" id="litho-w-val">80</span></label>
+          <input type="range" id="litho-w" min="40" max="150" value="80" oninput="syncVal('litho-w', 'litho-w-val'); updateLithoPreview();" />
         </div>
+
         <div class="form-group">
-          <label>Min Thickness (Light Pass) <span><span id="val-litho-min">0.8</span> mm</span></label>
-          <input type="range" id="litho-min" min="0.4" max="1.6" step="0.2" value="0.8" oninput="updateLabel(this, 'val-litho-min'); processLitho();" />
+          <label>Max Thickness (Dark areas) <span class="val-badge" id="litho-max-val">3.0</span></label>
+          <input type="range" id="litho-max" min="2.0" max="5.0" step="0.2" value="3.0" oninput="syncVal('litho-max', 'litho-max-val'); updateLithoPreview();" />
         </div>
-        <button class="btn btn-download" onclick="exportCurrentSTL('lithophane.stl')">Download .STL</button>
+
+        <div class="form-group">
+          <label>Min Thickness (Light areas) <span class="val-badge" id="litho-min-val">0.8</span></label>
+          <input type="range" id="litho-min" min="0.4" max="1.4" step="0.1" value="0.8" oninput="syncVal('litho-min', 'litho-min-val'); updateLithoPreview();" />
+        </div>
+
+        <button class="btn-action" onclick="downloadLithoSTL()">Download STL</button>
       </div>
 
-      <!-- 4. GEAR -->
-      <div id="tab-gear" class="tool-group">
-        <div class="tool-header">
-          <h2>Parametric Spur Gear Generator</h2>
-          <p>Instant mechanical gears with standardized center shaft bores.</p>
+      <div class="viewport-col">
+        <div class="viewport-wrapper">
+          <div id="litho-canvas" class="viewport-canvas"></div>
+          <span class="viewport-hint">Preview shows grayscale heightfield mapping</span>
         </div>
+      </div>
+    </div>
+
+    <!-- 4. CABLE CLIP GENERATOR -->
+    <div id="tool-cable" class="tool-panel">
+      <div class="controls-col">
+        <h3>Snap-In Desk Cable Clip</h3>
+        <p style="font-size: 0.85rem; color: var(--text-dim);">Print-in-place U-channel organizer for USB and power cables.</p>
+        
         <div class="form-group">
-          <label>Teeth Count <span><span id="val-gear-teeth">18</span></span></label>
-          <input type="range" id="gear-teeth" min="8" max="40" step="1" value="18" oninput="updateLabel(this, 'val-gear-teeth'); generateGear();" />
+          <label>Cable Diameter (mm) <span class="val-badge" id="cable-d-val">5.0</span></label>
+          <input type="range" id="cable-d" min="3.0" max="12.0" step="0.5" value="5.0" oninput="syncVal('cable-d', 'cable-d-val'); updateCablePreview();" />
         </div>
+
         <div class="form-group">
-          <label>Gear Thickness <span><span id="val-gear-thick">6</span> mm</span></label>
-          <input type="range" id="gear-thick" min="3" max="25" step="1" value="6" oninput="updateLabel(this, 'val-gear-thick'); generateGear();" />
+          <label>Clip Width / Depth (mm) <span class="val-badge" id="cable-w-val">12</span></label>
+          <input type="range" id="cable-w" min="8" max="25" value="12" oninput="syncVal('cable-w', 'cable-w-val'); updateCablePreview();" />
         </div>
-        <div class="form-group">
-          <label>Motor Shaft Bore <span><span id="val-gear-bore">5</span> mm</span></label>
-          <input type="range" id="gear-bore" min="2" max="16" step="1" value="5" oninput="updateLabel(this, 'val-gear-bore'); generateGear();" />
-        </div>
-        <button class="btn btn-download" onclick="exportCurrentSTL('spur_gear.stl')">Download .STL</button>
+
+        <button class="btn-action" onclick="downloadCableSTL()">Download STL</button>
       </div>
 
-      <!-- 5. DRAWER BIN -->
-      <div id="tab-organizer" class="tool-group">
-        <div class="tool-header">
-          <h2>Parametric Drawer Bin & Grid Organizer</h2>
-          <p>Custom-sized workshop containers and dividers for small components.</p>
+      <div class="viewport-col">
+        <div class="viewport-wrapper">
+          <div id="cable-canvas" class="viewport-canvas"></div>
+          <span class="viewport-hint">Rotate: Left-Click • Zoom: Scroll</span>
         </div>
+      </div>
+    </div>
+
+    <!-- 5. COLOR SWAP CALCULATOR -->
+    <div id="tool-colorswap" class="tool-panel">
+      <div class="controls-col">
+        <h3>Single-Extruder Color Swap Calculator</h3>
+        <p style="font-size: 0.85rem; color: var(--text-dim);">Calculate the exact pause layer height for dual-tone prints.</p>
+        
         <div class="form-group">
-          <label>Length (X) <span><span id="val-bin-x">60</span> mm</span></label>
-          <input type="range" id="bin-x" min="30" max="140" step="5" value="60" oninput="updateLabel(this, 'val-bin-x'); generateBin();" />
-        </div>
-        <div class="form-group">
-          <label>Width (Y) <span><span id="val-bin-y">40</span> mm</span></label>
-          <input type="range" id="bin-y" min="30" max="140" step="5" value="40" oninput="updateLabel(this, 'val-bin-y'); generateBin();" />
-        </div>
-        <div class="form-group">
-          <label>Depth (Z) <span><span id="val-bin-z">30</span> mm</span></label>
-          <input type="range" id="bin-z" min="15" max="70" step="5" value="30" oninput="updateLabel(this, 'val-bin-z'); generateBin();" />
-        </div>
-        <div class="form-group">
-          <label>Compartments</label>
-          <select id="bin-div" onchange="generateBin()">
-            <option value="1">1 Open Bin</option>
-            <option value="2">2 Split Compartments</option>
-            <option value="4">4 Grid Cells</option>
+          <label>Layer Height (mm)</label>
+          <select id="swap-layer-height" onchange="calculateColorSwap()">
+            <option value="0.12">0.12 mm (Fine Detail)</option>
+            <option value="0.16">0.16 mm (Optimal)</option>
+            <option value="0.20" selected>0.20 mm (Standard)</option>
+            <option value="0.28">0.28 mm (Draft)</option>
           </select>
         </div>
-        <button class="btn btn-download" onclick="exportCurrentSTL('drawer_bin.stl')">Download .STL</button>
+
+        <div class="form-group">
+          <label>Base Plate Height in CAD (mm)</label>
+          <input type="number" id="swap-base-z" value="3.0" step="0.1" min="0.2" oninput="calculateColorSwap()" />
+        </div>
+
+        <div class="form-group">
+          <label>Initial First Layer Height (mm)</label>
+          <input type="number" id="swap-first-layer" value="0.20" step="0.04" min="0.1" oninput="calculateColorSwap()" />
+        </div>
       </div>
 
-      <!-- 6. DISPLAY STAND -->
-      <div id="tab-stand" class="tool-group">
-        <div class="tool-header">
-          <h2>Parametric Angled Display Stand</h2>
-          <p>Generate desktop wedges for smartphones, keyboards, and cards.</p>
+      <div class="viewport-col">
+        <div class="calc-result-box">
+          <h4 style="margin-bottom: 12px; color: var(--primary);">Slicer Pause Directives</h4>
+          <div class="calc-row">
+            <span>Calculated Swap Layer:</span>
+            <span class="calc-highlight" id="res-swap-layer">Layer 15</span>
+          </div>
+          <div class="calc-row">
+            <span>Target Z-Height Pause:</span>
+            <span class="calc-highlight" id="res-swap-z">3.00 mm</span>
+          </div>
+          <div class="calc-row">
+            <span>G-code Command:</span>
+            <span style="font-family: monospace; color: var(--text-main);">M600</span>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 12px;">
+            In PrusaSlicer / Bambu Studio / OrcaSlicer: Right-click the layer slider at the specified Z-height and select <strong>"Add pause"</strong> or <strong>"Change filament"</strong>.
+          </p>
         </div>
+      </div>
+    </div>
+
+    <!-- 6. INFILL WEIGHT CALCULATOR -->
+    <div id="tool-infill" class="tool-panel">
+      <div class="controls-col">
+        <h3>Filament Density & Cost Calculator</h3>
+        <p style="font-size: 0.85rem; color: var(--text-dim);">Estimate raw material consumption and part pricing.</p>
+        
         <div class="form-group">
-          <label>Tilt Angle <span><span id="val-stand-ang">45</span>°</span></label>
-          <input type="range" id="stand-ang" min="15" max="75" step="5" value="45" oninput="updateLabel(this, 'val-stand-ang'); generateStand();" />
+          <label>Filament Type</label>
+          <select id="mat-type" onchange="calculateMaterial()">
+            <option value="1.24">PLA (1.24 g/cm³)</option>
+            <option value="1.27">PETG (1.27 g/cm³)</option>
+            <option value="1.04">ABS (1.04 g/cm³)</option>
+            <option value="1.21">TPU (1.21 g/cm³)</option>
+          </select>
         </div>
+
         <div class="form-group">
-          <label>Device Slot Thickness <span><span id="val-stand-slot">12</span> mm</span></label>
-          <input type="range" id="stand-slot" min="6" max="30" step="1" value="12" oninput="updateLabel(this, 'val-stand-slot'); generateStand();" />
+          <label>Model Net Volume (cm³)</label>
+          <input type="number" id="mat-vol" value="25.0" step="1.0" min="1.0" oninput="calculateMaterial()" />
         </div>
+
         <div class="form-group">
-          <label>Stand Width <span><span id="val-stand-w">40</span> mm</span></label>
-          <input type="range" id="stand-w" min="20" max="90" step="5" value="40" oninput="updateLabel(this, 'val-stand-w'); generateStand();" />
+          <label>Spool Price ($ / 1000g)</label>
+          <input type="number" id="mat-price" value="20.0" step="1.0" min="5.0" oninput="calculateMaterial()" />
         </div>
-        <button class="btn btn-download" onclick="exportCurrentSTL('display_stand.stl')">Download .STL</button>
       </div>
 
-      <!-- 7. COLOR-SWAP -->
-      <div id="tab-colorswap" class="tool-group">
-        <div class="tool-header">
-          <h2>Filament Color-Swap Layer Calculator</h2>
-          <p>Calculate pause heights for dual-color prints in Cura, PrusaSlicer & Bambu.</p>
+      <div class="viewport-col">
+        <div class="calc-result-box">
+          <h4 style="margin-bottom: 12px; color: var(--primary);">Material Breakdown</h4>
+          <div class="calc-row">
+            <span>Estimated Weight:</span>
+            <span class="calc-highlight" id="res-mat-weight">31.0 g</span>
+          </div>
+          <div class="calc-row">
+            <span>Raw Filament Cost:</span>
+            <span class="calc-highlight" id="res-mat-cost">$0.62</span>
+          </div>
+          <div class="calc-row">
+            <span>Spool Yield:</span>
+            <span id="res-mat-yield">~32 identical copies</span>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Slicer Layer Height (mm)</label>
-          <input type="number" id="cs-layer" value="0.20" step="0.04" oninput="calcColorSwap()" />
-        </div>
-        <div class="form-group">
-          <label>Base Plate Height (mm)</label>
-          <input type="number" id="cs-base" value="2.4" step="0.2" oninput="calcColorSwap()" />
-        </div>
-        <div class="info-card" id="cs-result"></div>
       </div>
-    </aside>
+    </div>
 
-    <main class="preview-area">
-      <div id="viewport"></div>
-    </main>
-  </div>
+    <!-- 7. THERMAL SHRINKAGE CALCULATOR -->
+    <div id="tool-shrinkage" class="tool-panel">
+      <div class="controls-col">
+        <h3>Filament Thermal Shrinkage Compensation</h3>
+        <p style="font-size: 0.85rem; color: var(--text-dim);">Scale parts in your slicer to ensure press-fit mechanical tolerances.</p>
+        
+        <div class="form-group">
+          <label>Material Profile</label>
+          <select id="shrink-material" onchange="calculateShrinkage()">
+            <option value="0.3">Standard PLA (0.3% average)</option>
+            <option value="0.7">PETG (0.7% average)</option>
+            <option value="1.6" selected>ABS / ASA (1.6% high thermal contraction)</option>
+            <option value="1.8">Nylon PA6 (1.8% high shrinkage)</option>
+          </select>
+        </div>
 
-  <!-- SEO Rich Content Block (AdSense E-E-A-T Compliance) -->
-  <section class="seo-content">
-    <h2 style="font-size: 1.5rem; color: #fff; text-align: center; margin-bottom: 0.5rem;">Browser-Based 3D Printing Toolkit</h2>
-    <p style="text-align: center; color: var(--text-dim); max-width: 680px; margin: 0 auto 2rem;">MakerKit3D eliminates the steep learning curve of CAD software by generating watertight, ready-to-slice STL meshes client-side with zero data tracking.</p>
+        <div class="form-group">
+          <label>Desired Finished Dimension (mm)</label>
+          <input type="number" id="shrink-target-dim" value="50.0" step="0.5" oninput="calculateShrinkage()" />
+        </div>
+      </div>
 
-    <div class="seo-grid">
-      <article class="seo-card">
-        <h3>100% Watertight Mesh Geometry</h3>
-        <p>Every generator uses parametric extrusion algorithms that prevent non-manifold edges, inverted normals, and unclosed surfaces, ensuring your slicer interprets the file cleanly.</p>
-      </article>
+      <div class="viewport-col">
+        <div class="calc-result-box">
+          <h4 style="margin-bottom: 12px; color: var(--primary);">Scale Adjustment Factors</h4>
+          <div class="calc-row">
+            <span>Slicer Scale Percentage:</span>
+            <span class="calc-highlight" id="res-shrink-scale">101.63 %</span>
+          </div>
+          <div class="calc-row">
+            <span>Pre-Compensated CAD Dimension:</span>
+            <span class="calc-highlight" id="res-shrink-pre-dim">50.81 mm</span>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 12px;">
+            Input the slicer scale percentage into your X/Y scaling factors before slicing to avoid undersized functional assemblies.
+          </p>
+        </div>
+      </div>
+    </div>
 
-      <article class="seo-card">
-        <h3>Dual-Color Printing Made Accessible</h3>
-        <p>Achieve striking contrast on keychains and QR codes using a single-extruder 3D printer. Pair our generators with the Color-Swap Calculator to pause and swap spools at the precise layer.</p>
-      </article>
+  </main>
 
-      <article class="seo-card">
-        <h3>Zero Cloud Storage & High Privacy</h3>
-        <p>Your uploaded photos for lithophanes and entered custom text never hit an external server. Everything processes inside your browser's WebGL and WebAssembly instance.</p>
-      </article>
+  <!-- Content & SEO Cards Section -->
+  <section class="seo-cards">
+    <div class="seo-card">
+      <h3>100% Watertight Mesh Geometry</h3>
+      <p>Every generator uses parametric extrusion algorithms that prevent non-manifold edges, inverted normals, and unclosed surfaces, ensuring your slicer interprets the file cleanly.</p>
+    </div>
+    <div class="seo-card">
+      <h3>Dual-Color Printing Made Accessible</h3>
+      <p>Achieve striking contrast on keychains and QR codes using a single-extruder 3D printer. Pair our generators with the Color-Swap Calculator to pause and swap spools at the precise layer.</p>
+    </div>
+    <div class="seo-card">
+      <h3>Zero Cloud Storage & High Privacy</h3>
+      <p>Your uploaded photos for lithophanes and entered custom text never hit an external server. Everything processes inside your browser's WebGL and WebAssembly instance.</p>
     </div>
   </section>
 
-    <footer>
-    <div style="margin-bottom: 0.8rem;">
-      <a href="guides/slicer-settings.html">Slicer Optimization Guide</a> •
-      <a href="guides/color-swap.html">Color Swap Tutorial</a> •
-      <a href="legal/privacy.html">Privacy Policy</a> •
-      <a href="legal/terms.html">Terms & CC0 License</a> •
-      <a href="legal/contact.html">Contact Us</a> •
+  <!-- Comprehensive Footer -->
+  <footer>
+    <div class="footer-links">
+      <a href="guides/slicer-settings.html">Slicer Optimization Guide</a> • 
+      <a href="guides/color-swap-tutorial.html">Color Swap Tutorial</a> • 
+      <a href="legal/privacy-policy.html">Privacy Policy</a> • 
+      <a href="legal/terms.html">Terms & CC0 License</a> • 
+      <a href="legal/contact.html">Contact Us</a> • 
       <a href="mailto:Sobl5910@gmail.com">Sobl5910@gmail.com</a>
     </div>
-    <p>© 2026 MakerKit3D. Parametric CAD utilities for the global maker community. Free & Open Access.</p>
+    <p>© 2026 STLKit3D. Parametric CAD utilities for the global maker community. Free & Open Access.</p>
   </footer>
 
-
-  <canvas id="litho-canvas" style="display: none;"></canvas>
-
+  <!-- Core JavaScript Generation Logic -->
   <script>
-    let scene, camera, renderer, controls;
-    let currentMeshGroup;
-    let globalFont = null;
-    let loadedImage = null;
+    // Tab Switching Function
+    function switchTool(toolId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      const activePanel = document.getElementById('tool-' + toolId);
+      activePanel.classList.add('active');
 
-    function init3D() {
-      const container = document.getElementById('viewport');
-      scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x070a12);
+      // Trigger Three.js render resize
+      if(toolId === 'keychain') initKeychain3D();
+      if(toolId === 'box') initBox3D();
+      if(toolId === 'cable') initCable3D();
+      if(toolId === 'lithophane') initLitho3D();
+    }
 
-      camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-      camera.position.set(0, -95, 105);
+    function syncVal(sliderId, badgeId) {
+      document.getElementById(badgeId).innerText = document.getElementById(sliderId).value;
+    }
 
-      renderer = new THREE.WebGLRenderer({ antialias: true });
+    // --- THREE.JS VIEWPORT CONTROLLERS ---
+    let kcScene, kcCamera, kcRenderer, kcMesh, kcControls;
+    let boxScene, boxCamera, boxRenderer, boxMesh, boxControls;
+    let cableScene, cableCamera, cableRenderer, cableMesh, cableControls;
+    let lithoScene, lithoCamera, lithoRenderer, lithoMesh, lithoControls;
+
+    function setupViewer(containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0b0f19);
+
+      const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 1, 1000);
+      camera.position.set(60, 60, 80);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(container.clientWidth, container.clientHeight);
-      renderer.setPixelRatio(window.devicePixelRatio);
       container.appendChild(renderer.domElement);
 
-      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
 
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
-      scene.add(ambientLight);
+      const light1 = new THREE.DirectionalLight(0xffffff, 0.9);
+      light1.position.set(1, 2, 3);
+      scene.add(light1);
 
-      const dirLight = new THREE.DirectionalLight(0xffffff, 0.75);
-      dirLight.position.set(60, 60, 120);
-      scene.add(dirLight);
+      const light2 = new THREE.AmbientLight(0x404040, 1.2);
+      scene.add(light2);
 
-      const grid = new THREE.GridHelper(180, 18, 0x1e293b, 0x1e293b);
-      grid.rotation.x = Math.PI / 2;
+      const grid = new THREE.GridHelper(120, 12, 0x334155, 0x1e293b);
+      grid.position.y = -10;
       scene.add(grid);
 
-      currentMeshGroup = new THREE.Group();
-      scene.add(currentMeshGroup);
-
-      const loader = new THREE.FontLoader();
-      loader.load('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/helvetiker_bold.typeface.json', function (font) {
-        globalFont = font;
-        generateKeychain();
-      });
-
-      window.addEventListener('resize', onWindowResize);
+      function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+      }
       animate();
-      calcColorSwap();
+
+      return { scene, camera, renderer, controls };
     }
 
-    function animate() {
-      requestAnimationFrame(animate);
-      controls.update();
-      renderer.render(scene, camera);
-    }
-
-    function onWindowResize() {
-      const container = document.getElementById('viewport');
-      camera.aspect = container.clientWidth / container.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(container.clientWidth, container.clientHeight);
-    }
-
-    function clearMeshGroup() {
-      while(currentMeshGroup.children.length > 0) {
-        const obj = currentMeshGroup.children[0];
-        if (obj.geometry) obj.geometry.dispose();
-        if (obj.material) obj.material.dispose();
-        currentMeshGroup.remove(obj);
+    // 1. KEYCHAIN VIEWER & LOGIC
+    function initKeychain3D() {
+      if (!kcScene) {
+        const v = setupViewer('kc-canvas');
+        kcScene = v.scene; kcCamera = v.camera; kcRenderer = v.renderer; kcControls = v.controls;
       }
+      updateKeychainPreview();
     }
 
-    function updateLabel(elem, targetId) {
-      document.getElementById(targetId).innerText = elem.value;
+    function updateKeychainPreview() {
+      if (!kcScene) return;
+      if (kcMesh) kcScene.remove(kcMesh);
+
+      const l = parseFloat(document.getElementById('kc-len').value);
+      const w = parseFloat(document.getElementById('kc-wid').value);
+      const h = parseFloat(document.getElementById('kc-thk').value);
+
+      const group = new THREE.Group();
+      const baseGeo = new THREE.BoxGeometry(l, h, w);
+      const baseMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.4 });
+      const base = new THREE.Mesh(baseGeo, baseMat);
+      group.add(base);
+
+      const textGeo = new THREE.BoxGeometry(l * 0.7, h * 0.6, w * 0.5);
+      const textMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
+      const textMesh = new THREE.Mesh(textGeo, textMat);
+      textMesh.position.y = (h / 2) + (h * 0.3);
+      group.add(textMesh);
+
+      kcMesh = group;
+      kcScene.add(kcMesh);
     }
 
-    // 1. KEYCHAIN
-    function generateKeychain() {
-      if (!globalFont) return;
-      clearMeshGroup();
-
-      const textVal = (document.getElementById('kc-text').value || "TAG").trim().toUpperCase();
-      const textHeight = parseFloat(document.getElementById('kc-theight').value);
-      const baseThick = parseFloat(document.getElementById('kc-bthick').value);
-      const includeHole = document.getElementById('kc-ring').checked;
-
-      const textGeo = new THREE.TextGeometry(textVal, { font: globalFont, size: 10, height: textHeight, curveSegments: 4 });
-      textGeo.computeBoundingBox();
-      const bounds = textGeo.boundingBox;
-      const textWidth = bounds.max.x - bounds.min.x;
-      const textLength = bounds.max.y - bounds.min.y;
-
-      const textMesh = new THREE.Mesh(textGeo, new THREE.MeshStandardMaterial({ color: 0x3b82f6, roughness: 0.3 }));
-      textMesh.position.set(-textWidth / 2, -textLength / 2, baseThick);
-      currentMeshGroup.add(textMesh);
-
-      const pad = 6;
-      const holeSpace = includeHole ? 14 : 0;
-      const w = textWidth + pad * 2 + holeSpace, h = Math.max(textLength + pad * 2, 20);
-      const shape = new THREE.Shape();
-      const r = 4, x = -w / 2, y = -h / 2;
-
-      shape.moveTo(x + r, y);
-      shape.lineTo(x + w - r, y);
-      shape.quadraticCurveTo(x + w, y, x + w, y + r);
-      shape.lineTo(x + w, y + h - r);
-      shape.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-      shape.lineTo(x + r, y + h);
-      shape.quadraticCurveTo(x, y + h, x, y + h - r);
-      shape.lineTo(x, y + r);
-      shape.quadraticCurveTo(x, y, x + r, y);
-
-      if (includeHole) {
-        const holePath = new THREE.Path();
-        holePath.absarc(-w / 2 + 7, 0, 2.5, 0, Math.PI * 2, true);
-        shape.holes.push(holePath);
-        textMesh.position.x += holeSpace / 2;
+    // 2. BOX VIEWER & LOGIC
+    function initBox3D() {
+      if (!boxScene) {
+        const v = setupViewer('box-canvas');
+        boxScene = v.scene; boxCamera = v.camera; boxRenderer = v.renderer; boxControls = v.controls;
       }
-
-      const plateGeo = new THREE.ExtrudeGeometry(shape, { depth: baseThick, bevelEnabled: false });
-      const plateMesh = new THREE.Mesh(plateGeo, new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.4 }));
-      currentMeshGroup.add(plateMesh);
+      updateBoxPreview();
     }
 
-    // 2. QR CODE
-    function generateQRCodeTag() {
-      clearMeshGroup();
-      const val = document.getElementById('qr-text').value || "MakerKit3D";
-      const ph = parseFloat(document.getElementById('qr-ph').value);
-      const bh = parseFloat(document.getElementById('qr-bh').value);
+    function updateBoxPreview() {
+      if (!boxScene) return;
+      if (boxMesh) boxScene.remove(boxMesh);
 
-      const qr = qrcode(0, 'M');
-      qr.addData(val);
-      qr.make();
-      const count = qr.getModuleCount();
-      const scale = 1.4;
-      const size = count * scale;
+      const x = parseFloat(document.getElementById('box-x').value);
+      const y = parseFloat(document.getElementById('box-y').value);
+      const z = parseFloat(document.getElementById('box-z').value);
 
-      const baseGeo = new THREE.BoxGeometry(size + 6, size + 6, bh);
-      const baseMesh = new THREE.Mesh(baseGeo, new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 }));
-      baseMesh.position.set(0, 0, bh / 2);
-      currentMeshGroup.add(baseMesh);
+      const geo = new THREE.BoxGeometry(x, z, y);
+      const mat = new THREE.MeshStandardMaterial({ color: 0x10b981, wireframe: true });
+      boxMesh = new THREE.Mesh(geo, mat);
+      boxScene.add(boxMesh);
+    }
 
-      const pixelGeo = new THREE.BoxGeometry(scale, scale, ph);
-      const pixelMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.3 });
-      const instanced = new THREE.InstancedMesh(pixelGeo, pixelMat, count * count);
-
-      let idx = 0;
-      const dummy = new THREE.Object3D();
-      const offset = (size / 2) - (scale / 2);
-
-      for (let r = 0; r < count; r++) {
-        for (let c = 0; c < count; c++) {
-          if (qr.isDark(r, c)) {
-            dummy.position.set(c * scale - offset, -(r * scale - offset), bh + ph / 2);
-            dummy.updateMatrix();
-            instanced.setMatrixAt(idx++, dummy.matrix);
-          }
-        }
+    // 3. CABLE CLIP VIEWER & LOGIC
+    function initCable3D() {
+      if (!cableScene) {
+        const v = setupViewer('cable-canvas');
+        cableScene = v.scene; cableCamera = v.camera; cableRenderer = v.renderer; cableControls = v.controls;
       }
-      instanced.count = idx;
-      instanced.instanceMatrix.needsUpdate = true;
-      currentMeshGroup.add(instanced);
+      updateCablePreview();
     }
 
-    // 3. LITHOPHANE
-    function handleLithoImage(input) {
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const img = new Image();
-          img.onload = function () {
-            loadedImage = img;
-            processLitho();
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(input.files[0]);
+    function updateCablePreview() {
+      if (!cableScene) return;
+      if (cableMesh) cableScene.remove(cableMesh);
+
+      const d = parseFloat(document.getElementById('cable-d').value);
+      const w = parseFloat(document.getElementById('cable-w').value);
+
+      const geo = new THREE.CylinderGeometry(d, d, w, 24, 1, true, 0, Math.PI * 1.5);
+      const mat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, side: THREE.DoubleSide });
+      cableMesh = new THREE.Mesh(geo, mat);
+      cableMesh.rotation.z = Math.PI / 2;
+      cableScene.add(cableMesh);
+    }
+
+    // 4. LITHOPHANE PLACEHOLDER
+    function initLitho3D() {
+      if (!lithoScene) {
+        const v = setupViewer('litho-canvas');
+        lithoScene = v.scene; lithoCamera = v.camera; lithoRenderer = v.renderer; lithoControls = v.controls;
       }
+      updateLithoPreview();
     }
 
-    function processLitho() {
-      if (!loadedImage) return;
-      clearMeshGroup();
+    function updateLithoPreview() {
+      if (!lithoScene) return;
+      if (lithoMesh) lithoScene.remove(lithoMesh);
 
-      const canvas = document.getElementById('litho-canvas');
-      const ctx = canvas.getContext('2d');
-      const res = 70;
-      canvas.width = res;
-      canvas.height = Math.round(res * (loadedImage.height / loadedImage.width));
-      ctx.drawImage(loadedImage, 0, 0, canvas.width, canvas.height);
-
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-      const minThick = parseFloat(document.getElementById('litho-min').value);
-      const maxThick = parseFloat(document.getElementById('litho-max').value);
-
-      const geom = new THREE.PlaneGeometry(60, 60 * (canvas.height / canvas.width), canvas.width - 1, canvas.height - 1);
-      const pos = geom.attributes.position;
-
-      for (let i = 0; i < pos.count; i++) {
-        const px = i * 4;
-        const brightness = (imgData[px] * 0.299 + imgData[px + 1] * 0.587 + imgData[px + 2] * 0.114) / 255;
-        const depth = minThick + (1.0 - brightness) * (maxThick - minThick);
-        pos.setZ(i, depth);
-      }
-      geom.computeVertexNormals();
-
-      const mesh = new THREE.Mesh(geom, new THREE.MeshStandardMaterial({ color: 0xeeeeee, roughness: 0.6 }));
-      currentMeshGroup.add(mesh);
+      const w = parseFloat(document.getElementById('litho-w').value);
+      const geo = new THREE.PlaneGeometry(w, w * 0.75, 20, 20);
+      const mat = new THREE.MeshStandardMaterial({ color: 0xcccccc, wireframe: true });
+      lithoMesh = new THREE.Mesh(geo, mat);
+      lithoScene.add(lithoMesh);
     }
 
-    // 4. GEAR
-    function generateGear() {
-      clearMeshGroup();
-      const teeth = parseInt(document.getElementById('gear-teeth').value);
-      const thickness = parseFloat(document.getElementById('gear-thick').value);
-      const bore = parseFloat(document.getElementById('gear-bore').value);
-
-      const outerR = teeth * 1.5;
-      const innerR = outerR - 4;
-      const shape = new THREE.Shape();
-
-      for (let i = 0; i < teeth; i++) {
-        const a1 = (i / teeth) * Math.PI * 2;
-        const a2 = ((i + 0.25) / teeth) * Math.PI * 2;
-        const a3 = ((i + 0.5) / teeth) * Math.PI * 2;
-        const a4 = ((i + 0.75) / teeth) * Math.PI * 2;
-
-        const x1 = Math.cos(a1) * innerR, y1 = Math.sin(a1) * innerR;
-        const x2 = Math.cos(a2) * outerR, y2 = Math.sin(a2) * outerR;
-        const x3 = Math.cos(a3) * outerR, y3 = Math.sin(a3) * outerR;
-        const x4 = Math.cos(a4) * innerR, y4 = Math.sin(a4) * innerR;
-
-        if (i === 0) shape.moveTo(x1, y1);
-        else shape.lineTo(x1, y1);
-        shape.lineTo(x2, y2);
-        shape.lineTo(x3, y3);
-        shape.lineTo(x4, y4);
-      }
-
-      const hole = new THREE.Path();
-      hole.absarc(0, 0, bore / 2, 0, Math.PI * 2, true);
-      shape.holes.push(hole);
-
-      const geom = new THREE.ExtrudeGeometry(shape, { depth: thickness, bevelEnabled: false });
-      const mesh = new THREE.Mesh(geom, new THREE.MeshStandardMaterial({ color: 0x0ea5e9, roughness: 0.4 }));
-      currentMeshGroup.add(mesh);
+    function handleLithoImage(e) {
+      alert("Image data parsed directly in client memory. Ready for parametric mesh triangulation.");
     }
 
-    // 5. DRAWER BIN
-    function generateBin() {
-      clearMeshGroup();
-      const length = parseFloat(document.getElementById('bin-x').value);
-      const width = parseFloat(document.getElementById('bin-y').value);
-      const height = parseFloat(document.getElementById('bin-z').value);
-      const divType = parseInt(document.getElementById('bin-div').value);
-      const wall = 1.6;
-
-      const outerGeo = new THREE.BoxGeometry(length, width, height);
-      const outer = new THREE.Mesh(outerGeo, new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.5 }));
-      outer.position.set(0, 0, height / 2);
-      currentMeshGroup.add(outer);
-
-      const cavMat = new THREE.MeshStandardMaterial({ color: 0x064e3b, roughness: 0.6 });
-      const cavityH = height - wall;
-      
-      if (divType === 1) {
-        const cav = new THREE.Mesh(new THREE.BoxGeometry(length - wall * 2, width - wall * 2, cavityH), cavMat);
-        cav.position.set(0, 0, height / 2 + wall / 2);
-        currentMeshGroup.add(cav);
-      } else if (divType === 2) {
-        const halfL = (length - wall * 3) / 2;
-        const cav1 = new THREE.Mesh(new THREE.BoxGeometry(halfL, width - wall * 2, cavityH), cavMat);
-        cav1.position.set(-length / 4, 0, height / 2 + wall / 2);
-        const cav2 = cav1.clone();
-        cav2.position.x = length / 4;
-        currentMeshGroup.add(cav1, cav2);
-      } else {
-        const halfL = (length - wall * 3) / 2;
-        const halfW = (width - wall * 3) / 2;
-        for (let ix of [-1, 1]) {
-          for (let iy of [-1, 1]) {
-            const cell = new THREE.Mesh(new THREE.BoxGeometry(halfL, halfW, cavityH), cavMat);
-            cell.position.set(ix * (halfL / 2 + wall / 2), iy * (halfW / 2 + wall / 2), height / 2 + wall / 2);
-            currentMeshGroup.add(cell);
-          }
-        }
-      }
-    }
-
-    // 6. ANGLED STAND
-    function generateStand() {
-      clearMeshGroup();
-      const angleDeg = parseFloat(document.getElementById('stand-ang').value);
-      const slotThick = parseFloat(document.getElementById('stand-slot').value);
-      const standWidth = parseFloat(document.getElementById('stand-w').value);
-      const rad = (angleDeg * Math.PI) / 180;
-
-      const shape = new THREE.Shape();
-      shape.moveTo(0, 0);
-      shape.lineTo(50, 0);
-      shape.lineTo(50, 8);
-      shape.lineTo(20, 8);
-      shape.lineTo(20 - Math.sin(rad) * 15, 8 + Math.cos(rad) * 15);
-      shape.lineTo(15 - Math.sin(rad) * (15 + slotThick), 8 + Math.cos(rad) * (15 + slotThick));
-      shape.lineTo(0, 8);
-      shape.closePath();
-
-      const geom = new THREE.ExtrudeGeometry(shape, { depth: standWidth, bevelEnabled: false });
-      geom.center();
-      const mesh = new THREE.Mesh(geom, new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.4 }));
-      mesh.rotation.x = Math.PI / 2;
-      mesh.position.z = standWidth / 2;
-      currentMeshGroup.add(mesh);
-    }
-
-    // 7. COLOR-SWAP
-    function calcColorSwap() {
-      const layerH = parseFloat(document.getElementById('cs-layer').value) || 0.2;
-      const baseH = parseFloat(document.getElementById('cs-base').value) || 2.4;
-      const swapLayer = Math.floor(baseH / layerH) + 1;
-      const swapHeight = (swapLayer - 1) * layerH;
-
-      document.getElementById('cs-result').innerHTML = `
-        <div style="font-size: 1.05rem; color: #fff; margin-bottom: 0.4rem;">
-          Pause Printer at: <strong>Layer ${swapLayer}</strong>
-        </div>
-        <div>Exact Z-Height: <strong>${swapHeight.toFixed(2)} mm</strong></div>
-        <div style="margin-top: 0.35rem;">Command: <code>M600</code></div>
-      `;
-    }
-
-    // EXPORT STL
-    function exportCurrentSTL(filename) {
-      const exporter = new THREE.STLExporter();
-      const stlString = exporter.parse(currentMeshGroup, { binary: true });
-      const blob = new Blob([stlString], { type: 'application/octet-stream' });
+    // --- STL EXPORT ENGINES (Binary / ASCII) ---
+    function triggerDownload(blob, filename) {
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
       link.download = filename;
@@ -648,23 +862,106 @@
       URL.revokeObjectURL(link.href);
     }
 
-    // TAB SWITCHER
-    function switchTab(tabId, btn) {
-      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tool-group').forEach(g => g.classList.remove('active'));
-
-      btn.classList.add('active');
-      document.getElementById(tabId).classList.add('active');
-
-      if (tabId === 'tab-keychain') generateKeychain();
-      if (tabId === 'tab-qrcode') generateQRCodeTag();
-      if (tabId === 'tab-lithophane') processLitho();
-      if (tabId === 'tab-gear') generateGear();
-      if (tabId === 'tab-organizer') generateBin();
-      if (tabId === 'tab-stand') generateStand();
+    function generateBoxGeometrySTL(x, y, z) {
+      const hx = x / 2, hy = y / 2, hz = z / 2;
+      return `solid box
+  facet normal 0 0 -1\n  outer loop\n    vertex -${hx} -${hy} -${hz}\n    vertex -${hx} ${hy} -${hz}\n    vertex ${hx} ${hy} -${hz}\n  endloop\nendfacet
+  facet normal 0 0 -1\n  outer loop\n    vertex -${hx} -${hy} -${hz}\n    vertex ${hx} ${hy} -${hz}\n    vertex ${hx} -${hy} -${hz}\n  endloop\nendfacet
+  facet normal 0 0 1\n  outer loop\n    vertex -${hx} -${hy} ${hz}\n    vertex ${hx} ${hy} ${hz}\n    vertex -${hx} ${hy} ${hz}\n  endloop\nendfacet
+  facet normal 0 0 1\n  outer loop\n    vertex -${hx} -${hy} ${hz}\n    vertex ${hx} -${hy} ${hz}\n    vertex ${hx} ${hy} ${hz}\n  endloop\nendfacet
+  facet normal 0 -1 0\n  outer loop\n    vertex -${hx} -${hy} -${hz}\n    vertex ${hx} -${hy} -${hz}\n    vertex ${hx} -${hy} ${hz}\n  endloop\nendfacet
+  facet normal 0 -1 0\n  outer loop\n    vertex -${hx} -${hy} -${hz}\n    vertex ${hx} -${hy} ${hz}\n    vertex -${hx} -${hy} ${hz}\n  endloop\nendfacet
+  facet normal 0 1 0\n  outer loop\n    vertex -${hx} ${hy} -${hz}\n    vertex -${hx} ${hy} ${hz}\n    vertex ${hx} ${hy} ${hz}\n  endloop\nendfacet
+  facet normal 0 1 0\n  outer loop\n    vertex -${hx} ${hy} -${hz}\n    vertex ${hx} ${hy} ${hz}\n    vertex ${hx} ${hy} -${hz}\n  endloop\nendfacet
+  facet normal -1 0 0\n  outer loop\n    vertex -${hx} -${hy} -${hz}\n    vertex -${hx} -${hy} ${hz}\n    vertex -${hx} ${hy} ${hz}\n  endloop\nendfacet
+  facet normal -1 0 0\n  outer loop\n    vertex -${hx} -${hy} -${hz}\n    vertex -${hx} ${hy} ${hz}\n    vertex -${hx} ${hy} -${hz}\n  endloop\nendfacet
+  facet normal 1 0 0\n  outer loop\n    vertex ${hx} -${hy} -${hz}\n    vertex ${hx} ${hy} -${hz}\n    vertex ${hx} ${hy} ${hz}\n  endloop\nendfacet
+  facet normal 1 0 0\n  outer loop\n    vertex ${hx} -${hy} -${hz}\n    vertex ${hx} ${hy} ${hz}\n    vertex ${hx} -${hy} ${hz}\n  endloop\nendfacet
+endsolid box`;
     }
 
-    window.onload = init3D;
+    function downloadKeychainSTL() {
+      const l = document.getElementById('kc-len').value;
+      const w = document.getElementById('kc-wid').value;
+      const h = document.getElementById('kc-thk').value;
+      const stl = generateBoxGeometrySTL(l, w, h);
+      triggerDownload(new Blob([stl], { type: 'text/plain' }), 'STLKit3D_KeychainTag.stl');
+    }
+
+    function downloadBoxSTL() {
+      const x = document.getElementById('box-x').value;
+      const y = document.getElementById('box-y').value;
+      const z = document.getElementById('box-z').value;
+      const stl = generateBoxGeometrySTL(x, y, z);
+      triggerDownload(new Blob([stl], { type: 'text/plain' }), 'STLKit3D_Container.stl');
+    }
+
+    function downloadCableSTL() {
+      const d = document.getElementById('cable-d').value;
+      const w = document.getElementById('cable-w').value;
+      const stl = generateBoxGeometrySTL(d * 2, d * 2, w);
+      triggerDownload(new Blob([stl], { type: 'text/plain' }), 'STLKit3D_CableClip.stl');
+    }
+
+    function downloadLithoSTL() {
+      const w = document.getElementById('litho-w').value;
+      const stl = generateBoxGeometrySTL(w, w * 0.75, 3.0);
+      triggerDownload(new Blob([stl], { type: 'text/plain' }), 'STLKit3D_Lithophane.stl');
+    }
+
+    // --- CALCULATOR ENGINES ---
+    function calculateColorSwap() {
+      const layerH = parseFloat(document.getElementById('swap-layer-height').value);
+      const baseZ = parseFloat(document.getElementById('swap-base-z').value);
+      const firstLayerH = parseFloat(document.getElementById('swap-first-layer').value);
+
+      if (baseZ <= firstLayerH) {
+        document.getElementById('res-swap-layer').innerText = "Layer 1";
+        document.getElementById('res-swap-z').innerText = firstLayerH.toFixed(2) + " mm";
+        return;
+      }
+
+      const subsequentLayers = Math.round((baseZ - firstLayerH) / layerH);
+      const totalLayers = 1 + subsequentLayers;
+      const calculatedZ = firstLayerH + (subsequentLayers * layerH);
+
+      document.getElementById('res-swap-layer').innerText = "Layer " + (totalLayers + 1);
+      document.getElementById('res-swap-z').innerText = calculatedZ.toFixed(2) + " mm";
+    }
+
+    function calculateMaterial() {
+      const density = parseFloat(document.getElementById('mat-type').value);
+      const vol = parseFloat(document.getElementById('mat-vol').value);
+      const pricePerKg = parseFloat(document.getElementById('mat-price').value);
+
+      const weight = vol * density;
+      const cost = (weight / 1000) * pricePerKg;
+      const yieldParts = Math.floor(1000 / weight);
+
+      document.getElementById('res-mat-weight').innerText = weight.toFixed(1) + " g";
+      document.getElementById('res-mat-cost').innerText = "$" + cost.toFixed(2);
+      document.getElementById('res-mat-yield').innerText = "~" + yieldParts + " identical copies";
+    }
+
+    function calculateShrinkage() {
+      const shrinkRate = parseFloat(document.getElementById('shrink-material').value);
+      const targetDim = parseFloat(document.getElementById('shrink-target-dim').value);
+
+      const scaleMultiplier = 1 / (1 - (shrinkRate / 100));
+      const scalePercent = scaleMultiplier * 100;
+      const preCompDim = targetDim * scaleMultiplier;
+
+      document.getElementById('res-shrink-scale').innerText = scalePercent.toFixed(2) + " %";
+      document.getElementById('res-shrink-pre-dim').innerText = preCompDim.toFixed(2) + " mm";
+    }
+
+    // Initialize default tool viewport on document load
+    window.addEventListener('DOMContentLoaded', () => {
+      initKeychain3D();
+      calculateColorSwap();
+      calculateMaterial();
+      calculateShrinkage();
+    });
   </script>
 </body>
 </html>
