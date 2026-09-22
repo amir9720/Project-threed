@@ -1,44 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Manual Multi-Color 3D Printing Without MMU - MakerKit3D</title>
-  <link rel="stylesheet" href="../assets/css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Color Swap 3D Printing Tutorial - STLKit3D</title>
+  <link rel="canonical" href="https://stlkit3d.com/guides/color-swap-tutorial.html" />
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 32px;
+    }
+    h1 {
+      font-size: 1.8rem;
+      color: #38bdf8;
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-size: 1.2rem;
+      color: #f8fafc;
+      margin-top: 24px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 4px;
+    }
+    p, li {
+      color: #94a3b8;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+    ol {
+      padding-left: 20px;
+    }
+    code {
+      background-color: #0f172a;
+      border: 1px solid #334155;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #38bdf8;
+      font-family: monospace;
+    }
+    a {
+      color: #38bdf8;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1><a href="../index.html">MakerKit<span>3D</span></a></h1>
-    <nav>
-      <a href="../index.html">Tools</a>
-      <a href="slicer-settings.html">Slicer Guide</a>
-      <a href="color-swap.html">Color Swap</a>
-    </nav>
-  </header>
   <div class="container">
-    <div class="content-box">
-      <h1>Step-by-Step Filament Color-Swap Tutorial</h1>
-      <p>You do not need an expensive multi-material system (like Bambu AMS or Prusa MMU) to print dual-color nameplates and QR tags. By scheduling a layer pause in your G-code, you can change filament spools mid-print.</p>
+    <a href="../index.html" class="back-link">← Back to Generator Tools</a>
+    <h1>Single-Extruder Dual-Color 3D Printing Guide</h1>
+    <p>Learn how to produce high-contrast, multi-color badges and keychains without an expensive multi-material unit.</p>
 
-      <h2>1. Determining the Swap Layer</h2>
-      <p>Use the <strong>MakerKit3D Color-Swap Calculator</strong> to identify the transition point. For example, if your base plate is 2.4mm thick and printed at 0.20mm layer height:</p>
-      <p><code>Target Layer = (2.4 / 0.2) + 1 = Layer 13</code></p>
+    <h2>Step 1: Determine Your Separation Layer</h2>
+    <p>Using the <strong>STLKit3D Color-Swap Calculator</strong>, find the exact Z-height where your base plate stops and raised geometry begins (typically 2.6 mm to 3.0 mm).</p>
 
-      <h2>2. Inserting Pause in PrusaSlicer / SuperSlicer</h2>
-      <ul>
-        <li>Slice your STL model.</li>
-        <li>Move the layer preview slider to the target layer.</li>
-        <li>Right-click the small plus icon (+) on the slider and select <strong>"Add Color Change (M600)"</strong>.</li>
-        <li>Export the G-code to your SD card or send directly to OctoPrint.</li>
-      </ul>
+    <h2>Step 2: Add Pause in Your Slicer</h2>
+    <ol>
+      <li>Slice your model with your standard profile (0.20 mm recommended).</li>
+      <li>Move the layer preview vertical slider to the target swap layer.</li>
+      <li>Right-click the plus (+) icon on the layer slider:
+        <ul>
+          <li><strong>PrusaSlicer / SuperSlicer:</strong> Select <em>"Add color change (M600)"</em>.</li>
+          <li><strong>Bambu Studio / OrcaSlicer:</strong> Select <em>"Pause"</em>.</li>
+          <li><strong>Cura:</strong> Use <em>Extensions > Post Processing > Modify G-Code > Pause at Height</em>.</li>
+        </ul>
+      </li>
+    </ol>
 
-      <h2>3. Inserting Pause in Ultimaker Cura</h2>
-      <ul>
-        <li>Go to <em>Extensions &gt; Post Processing &gt; Modify G-Code</em>.</li>
-        <li>Click <em>Add a script</em> and choose <strong>Pause at Height</strong>.</li>
-        <li>Change <em>Pause at</em> to <strong>Layer Number</strong> and insert the target layer calculated by our tool.</li>
-        <li>Ensure <em>Park Print Head</em> coordinates keep the hot nozzle away from your print.</li>
-      </ul>
-    </div>
+    <h2>Step 3: Filament Purge Procedure</h2>
+    <p>When the printer pauses and beeps, pull back the base spool and insert your contrasting color. Ensure you purge until the extruded plastic runs 100% clean with no color bleed before resuming.</p>
   </div>
 </body>
 </html>
