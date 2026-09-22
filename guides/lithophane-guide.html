@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>I Spent 40 Hours Printing Flat Lithophanes: Here Are the Numbers That Actually Work</title>
+  <meta name="description" content="A hands-on breakdown of nozzle sizes, slicing orientation, real layer heights, and white filament brands for clean 3D printed lithophanes." />
+  <link rel="canonical" href="https://stlkit3d.com/guides/lithophane-guide.html" />
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.75;
+      padding: 40px 16px;
+    }
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 36px 28px;
+    }
+    h1 {
+      font-size: 1.85rem;
+      color: #38bdf8;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+    .meta-byline {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 12px;
+    }
+    h2 {
+      font-size: 1.25rem;
+      color: #f1f5f9;
+      margin-top: 32px;
+      margin-bottom: 12px;
+    }
+    p {
+      color: #cbd5e1;
+      font-size: 0.98rem;
+      margin-bottom: 18px;
+    }
+    ul, ol {
+      padding-left: 20px;
+      margin-bottom: 18px;
+      color: #cbd5e1;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    code {
+      background-color: #0b0f19;
+      color: #38bdf8;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-family: Menlo, Consolas, Monaco, monospace;
+    }
+    .note-box {
+      background-color: rgba(56, 189, 248, 0.06);
+      border-left: 3px solid #38bdf8;
+      padding: 14px 18px;
+      border-radius: 6px;
+      margin: 24px 0;
+    }
+    .note-box p {
+      margin: 0;
+      color: #e2e8f0;
+      font-size: 0.92rem;
+    }
+    a {
+      color: #38bdf8;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      text-decoration: none;
+    }
+    .back-btn:hover {
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html" class="back-btn">← Back to STLKit3D Generators</a>
+    
+    <h1>I Spent 40 Hours Printing Flat Lithophanes: Here Are the Numbers That Actually Work</h1>
+    <div class="meta-byline">
+      <span>Workshop Notes</span>
+      <span>•</span>
+      <span>Tested on Ender 3 & Bambu P1P</span>
+      <span>•</span>
+      <span>Updated Fall 2026</span>
+    </div>
+
+    <p>Most lithophane tutorials online repeat the exact same generic advice: <em>"just use 100% infill and print vertically."</em> But if you've actually tried doing that on a standard bed slinger, you've probably ended up with terrible ringing artifacts, knocked-over prints at hour seven, or muddy grey faces that only look good under direct sun.</p>
+
+    <p>After throwing away half a spool of failed white PLA test strips, here is the real breakdown of what works, what fails, and why certain settings ruin your contrast.</p>
+
+    <div class="note-box">
+      <p><strong>Note:</strong> If you don't feel like messing around with bulky external CAD packages, I baked these exact boundary offsets right into our <a href="../index.html">free browser-based lithophane generator</a> so the STL drops out watertight.</p>
+    </div>
+
+    <h2>1. The Thickness Trap (0.8 mm vs 3.0 mm)</h2>
+    <p>The whole secret of a lithophane is optical density. If your plastic is too thin, the highlights blowout and turn pure clear. If it's too thick, standard LEDs can't punch through the shadows.</p>
+    <p>Here are the boundary numbers that consistently gave me decent dynamic range across different spools:</p>
+    <ul>
+      <li><strong>Minimum Thickness (Highlight Areas):</strong> <code>0.8 mm</code>. Don't go down to 0.4 mm unless you want your print bed texture visible through the person's forehead. At 0.8 mm (with 0.20 mm layers), you get exactly 4 solid passes. That is stiff enough not to crack when you peel it off the PEI sheet.</li>
+      <li><strong>Maximum Thickness (Shadow Areas):</strong> <code>3.0 mm</code>. Anything over 3.2 mm just becomes a dark silhouette block. 3.0 mm gives deep black shadows when backlit by a typical 5V USB LED strip.</li>
+    </ul>
+
+    <h2>2. Printing Flat vs Upright: Stop Ruining Your Z-Axis</h2>
+    <p>Everyone says: <em>"Never print flat, always print upright."</em> That is half-true, but it comes with a huge catch.</p>
+    <p>When you stand a thin 80mm plate vertically on an Ender or any Cartesian printer where the bed flings back and forth on the Y-axis, momentum causes mechanical resonance as the print gets taller. By layer 300, the top of the photo will have fuzzy micro-shifts.</p>
+    <ul>
+      <li><strong>If you print upright:</strong> Align the thin edge strictly along the <strong>Y-axis</strong>, never along X. That way, the violent bed jerks push along the spine of the piece, not against its face. And slap a wide <strong>10 mm brim</strong> on it with 0.00 mm brim gap.</li>
+      <li><strong>If you print flat on the bed:</strong> It will print four times faster and never fall over. But you must drop down to a <strong>0.12 mm layer height</strong> and keep your print bed immaculately cleaned with isopropyl alcohol. Any fingerprint grease will show up as a dark smudge in the final backlit photo.</li>
+    </ul>
+
+    <h2>3. The Infill Mistake</h2>
+    <p>Do not set infill to 100% with a grid pattern. Your slicer will still try to draw tiny internal grids that leave weird ghost cross-hatching inside highlights. Instead, in OrcaSlicer, PrusaSlicer, or Cura:</p>
+    <ol>
+      <li>Set <strong>Perimeters / Wall Loops to 12</strong> (or anything high enough so the slicer generates zero internal infill).</li>
+      <li>Or set Infill Pattern to <strong>Rectilinear</strong> or <strong>Monotonic</strong>. This ensures the filament lines run consistently across the lighting path.</li>
+    </ol>
+
+    <h2>4. Filament Color Isn't Just "White"</h2>
+    <p>This caught me off guard early on. Not all white PLAs behave the same:</p>
+    <ul>
+      <li><strong>PLA+ / Pro (Opaque White):</strong> Avoid these if they contain heavy chalk or titanium dioxide pigments. Light barely cuts through 1.5 mm of it.</li>
+      <li><strong>Basic / Warm White PLA:</strong> This gives portraits a natural, warm candle-like glow.</li>
+      <li><strong>Cool / Cold White:</strong> Best for mechanical drawings, logos, and cityscapes where you want bluish-white contrast.</li>
+    </ul>
+
+    <h2>Quick Cheatsheet</h2>
+    <p>If you're ready to slice: set walls to 10, layer height to 0.12 mm, keep your speed under 45 mm/s on outer perimeters, and use a clean white PLA. Grab the model from our <a href="../index.html">STLKit3D Generator Hub</a> and slice away.</p>
+  </div>
+</body>
+</html>
