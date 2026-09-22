@@ -1,45 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Optimal Slicer Settings for Parametric STL Prints - MakerKit3D</title>
-  <link rel="stylesheet" href="../assets/css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Slicer Optimization Guide - STLKit3D</title>
+  <link rel="canonical" href="https://stlkit3d.com/guides/slicer-settings.html" />
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 32px;
+    }
+    h1 {
+      font-size: 1.8rem;
+      color: #38bdf8;
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-size: 1.2rem;
+      color: #f8fafc;
+      margin-top: 24px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 4px;
+    }
+    p, li {
+      color: #94a3b8;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    code {
+      background-color: #0f172a;
+      border: 1px solid #334155;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #38bdf8;
+      font-family: monospace;
+    }
+    a {
+      color: #38bdf8;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1><a href="../index.html">MakerKit<span>3D</span></a></h1>
-    <nav>
-      <a href="../index.html">Tools</a>
-      <a href="slicer-settings.html">Slicer Guide</a>
-      <a href="color-swap.html">Color Swap</a>
-    </nav>
-  </header>
   <div class="container">
-    <div class="content-box">
-      <h1>Optimal Slicer Settings for Parametric Functional Prints</h1>
-      <p>Parametric files generated via MakerKit3D (such as custom organizers, keychains, and gears) require distinct slicing parameters to balance strength, dimensional accuracy, and print speed. Follow these proven settings for Cura, PrusaSlicer, and Bambu Studio.</p>
+    <a href="../index.html" class="back-link">← Back to Generator Tools</a>
+    <h1>Slicer Optimization for Parametric Models</h1>
+    <p>Ensure maximum dimensional accuracy and layer bonding when slicing models generated on <strong>STLKit3D</strong>.</p>
 
-      <h2>1. Wall Line Count (Perimeters) Over Infill</h2>
-      <p>For functional components like gears, organizer bins, and mounting plates, increasing wall count provides significantly higher mechanical rigidity than simply increasing infill density.</p>
-      <ul>
-        <li><strong>Perimeters / Wall Loops:</strong> Set to 3 or 4 walls minimum (1.2mm – 1.6mm thickness with a 0.4mm nozzle).</li>
-        <li><strong>Infill Density:</strong> 15% to 25% is sufficient for bins and stands. For mechanical gears, use 40% to 50%.</li>
-        <li><strong>Infill Pattern:</strong> Use <em>Gyroid</em> or <em>Cubic</em>. Avoid Grid or Lines patterns, as nozzle crossing can cause layer shifts on thin-walled objects.</li>
-      </ul>
+    <h2>1. Wall Line Count & Shell Integrity</h2>
+    <p>For functional parts like our <em>Parametric Storage Box</em> and <em>Desk Cable Clip</em>, strength comes primarily from perimeters rather than infill density:</p>
+    <ul>
+      <li>Set <strong>Wall Line Count / Perimeters</strong> to a minimum of <code>3</code> (or <code>4</code> for snap-fit clips).</li>
+      <li>Set Top and Bottom solid layers to at least <code>4</code> to ensure watertight tops.</li>
+    </ul>
 
-      <h2>2. Layer Height and First Layer Calibration</h2>
-      <p>Accurate dimensions demand consistent extrusion:</p>
-      <ul>
-        <li><strong>First Layer Height:</strong> 0.24mm to 0.28mm ensures adequate bed adhesion and tolerance absorption.</li>
-        <li><strong>Standard Layer Height:</strong> 0.20mm for organizers and stands; drop to 0.12mm – 0.16mm for gears and text tags to preserve edge sharpness.</li>
-      </ul>
+    <h2>2. First Layer Squish & Dimensional Tolerances</h2>
+    <p>Parts with tight tolerances or press-fit clips require zero elephant's foot distortion:</p>
+    <ul>
+      <li>Enable <strong>Initial Layer Horizontal Expansion</strong> (or Elephant Foot Compensation) set to <code>-0.15 mm</code>.</li>
+      <li>Keep initial layer line width around <code>100%</code> to <code>110%</code> to maintain dimensional precision at the base.</li>
+    </ul>
 
-      <h2>3. Dimensional Compensation (Horizontal Expansion)</h2>
-      <p>When printing interlocking parts (such as the bore hole on spur gears or sliding bins), thermoplastic shrinkage can narrow tight clearances:</p>
-      <ul>
-        <li>If pin/shaft holes are slightly too tight, set <strong>Hole Horizontal Expansion</strong> (or X-Y Hole Compensation) to <code>+0.1mm</code>.</li>
-      </ul>
-    </div>
+    <h2>3. Infill Patterns for Functional Strength</h2>
+    <p>For mechanical models generated with our tools, choose isotropic infill patterns:</p>
+    <ul>
+      <li><strong>Gyroid:</strong> Offers uniform strength in all three axes without high nozzle resistance.</li>
+      <li><strong>Cubic:</strong> Great strength-to-weight ratio for rigid storage containers.</li>
+    </ul>
+
+    <h2>4. Lithophane Slicing Rules</h2>
+    <p>If printing light-transmitting lithophanes generated by our tool:</p>
+    <ul>
+      <li>Always print with <strong>100% Infill</strong> (or 10 walls) to avoid internal grid shadows.</li>
+      <li>Print vertically on the Y-axis for bed slingers to minimize surface ringing.</li>
+    </ul>
   </div>
 </body>
 </html>
