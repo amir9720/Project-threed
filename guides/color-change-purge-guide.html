@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Purge Filaments on Manual Color Changes Without Color Bleed</title>
+  <meta name="description" content="A practical guide to dialing in purge volume, avoiding nozzle drool, and preventing color bleed on single-extruder multi-color 3D prints." />
+  <link rel="canonical" href="https://stlkit3d.com/guides/color-change-purge-guide.html" />
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.75;
+      padding: 40px 16px;
+    }
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 36px 28px;
+    }
+    h1 {
+      font-size: 1.85rem;
+      color: #38bdf8;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+    .meta-byline {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 12px;
+    }
+    h2 {
+      font-size: 1.25rem;
+      color: #f1f5f9;
+      margin-top: 32px;
+      margin-bottom: 12px;
+    }
+    p {
+      color: #cbd5e1;
+      font-size: 0.98rem;
+      margin-bottom: 18px;
+    }
+    ul, ol {
+      padding-left: 20px;
+      margin-bottom: 18px;
+      color: #cbd5e1;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    code {
+      background-color: #0b0f19;
+      color: #38bdf8;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-family: Menlo, Consolas, Monaco, monospace;
+    }
+    .note-box {
+      background-color: rgba(56, 189, 248, 0.06);
+      border-left: 3px solid #38bdf8;
+      padding: 14px 18px;
+      border-radius: 6px;
+      margin: 24px 0;
+    }
+    .note-box p {
+      margin: 0;
+      color: #e2e8f0;
+      font-size: 0.92rem;
+    }
+    a {
+      color: #38bdf8;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      text-decoration: none;
+    }
+    .back-btn:hover {
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html" class="back-btn">← Back to STLKit3D Generators</a>
+    
+    <h1>How to Purge Filaments on Manual Color Changes Without Color Bleed</h1>
+    <div class="meta-byline">
+      <span>Workshop Notes</span>
+      <span>•</span>
+      <span>Multi-Material Optimization</span>
+      <span>•</span>
+      <span>Updated Fall 2026</span>
+    </div>
+
+    <p>Executing a mid-print color swap (via the classic <code>M600</code> command or slicer pause) is one of the most rewarding techniques on a single-nozzle 3D printer. But few things are more annoying than loading a pristine white or yellow filament after a black base, only to watch the first two layers of text turn into a muddy, dingy grey.</p>
+
+    <p>Molten pigment clings stubbornly to the interior walls of your hotend melt zone. If you don't calculate your flush volumes correctly, color contamination can linger across meters of extruded plastic. Here is how to nail sharp, vibrant color transitions every single time.</p>
+
+    <div class="note-box">
+      <p><strong>Need the exact layer height to pause?</strong> Calculate your Z-switch boundaries instantly with our free <a href="../index.html">Color Swap Height Calculator</a> on the homepage.</p>
+    </div>
+
+    <h2>1. The Dark-to-Light Transition Rules</h2>
+    <p>Color transitions are asymmetrical. Flushing white into black takes virtually no effort—black covers white almost immediately. But switching from a dark, heavily pigmented filament (black, dark blue, carbon red) to a light color (white, ivory, neon yellow) requires triple the purge volume.</p>
+    <ul>
+      <li><strong>Light to Dark (e.g., White -> Black):</strong> Needs only <code>50 mm - 70 mm</code> of extruded purge to achieve pure color saturation.</li>
+      <li><strong>Dark to Light (e.g., Black -> White):</strong> Requires at least <code>160 mm - 220 mm</code> of purged filament. If you stop early, your white layers will show a smoky grey gradient for the first 0.6 mm of Z-travel.</li>
+    </ul>
+
+    <h2>2. Beware the Nozzle Ooze Blob</h2>
+    <p>When the print pauses and you swap spools, you usually push filament through by hand until the color clears. But right when you hit "Resume", two common mistakes ruin the print:</p>
+    <ol>
+      <li><strong>Residual Nozzle Drool:</strong> The nozzle continues to ooze hot plastic while traveling back to the print location. If that molten loop touches your print, it fuses into a prominent surface zit.</li>
+      <li><strong>The Fix:</strong> Right before clicking resume, grab a pair of brass tweezers or needle-nose pliers. Pull off the extruded curl at the very split-second the printhead begins its travel move back to the bed.</li>
+    </ol>
+
+    <h2>3. The Cold Pull Trick for Stubborn Pigments</h2>
+    <p>If you frequently switch between high-pigment carbon blacks and translucent or white filaments, simple purging sometimes leaves micro-specks of charred plastic. Running a quick cold pull (or using dedicated acrylic cleaning filament) cleans out the nozzle throat in under two minutes:</p>
+    <ul>
+      <li>Heat the nozzle to <code>220°C</code>, push cleaning filament through until it flows clean.</li>
+      <li>Let the hotend cool down to <code>90°C</code>.</li>
+      <li>Firmly yank the filament straight up out of the extruder. It will pull out a perfect negative mold of your nozzle's internal cavity, taking all burned pigment with it.</li>
+    </ul>
+
+    <h2>4. Bed Adhesion During Long Pauses</h2>
+    <p>A manual color pause cools down your heated bed on some budget firmware configurations. Make sure your slicer or printer profile keeps the heated bed actively energized during pauses; otherwise, differential thermal shrinkage will pop the base of your print right off the PEI sheet before you can snap the second color on.</p>
+
+    <h2>Summary</h2>
+    <p>Flush at least 180 mm when going dark-to-light, keep bed heat active, and snatch the ooze trail with tweezers the instant the toolhead moves. Plan your pause Z-levels with precision on the <a href="../index.html">STLKit3D Utility Hub</a>.</p>
+  </div>
+</body>
+</html>
