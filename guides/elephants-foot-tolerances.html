@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Eliminate Elephant's Foot on Functional Snap-Fit Parts</title>
+  <meta name="description" content="Workshop benchmarks for stopping first-layer squish and dimensional flare on functional 3D prints without losing bed adhesion." />
+  <link rel="canonical" href="https://stlkit3d.com/guides/elephants-foot-tolerances.html" />
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.75;
+      padding: 40px 16px;
+    }
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 36px 28px;
+    }
+    h1 {
+      font-size: 1.85rem;
+      color: #38bdf8;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+    .meta-byline {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 12px;
+    }
+    h2 {
+      font-size: 1.25rem;
+      color: #f1f5f9;
+      margin-top: 32px;
+      margin-bottom: 12px;
+    }
+    p {
+      color: #cbd5e1;
+      font-size: 0.98rem;
+      margin-bottom: 18px;
+    }
+    ul, ol {
+      padding-left: 20px;
+      margin-bottom: 18px;
+      color: #cbd5e1;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    code {
+      background-color: #0b0f19;
+      color: #38bdf8;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-family: Menlo, Consolas, Monaco, monospace;
+    }
+    .note-box {
+      background-color: rgba(56, 189, 248, 0.06);
+      border-left: 3px solid #38bdf8;
+      padding: 14px 18px;
+      border-radius: 6px;
+      margin: 24px 0;
+    }
+    .note-box p {
+      margin: 0;
+      color: #e2e8f0;
+      font-size: 0.92rem;
+    }
+    a {
+      color: #38bdf8;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      text-decoration: none;
+    }
+    .back-btn:hover {
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html" class="back-btn">← Back to STLKit3D Generators</a>
+    
+    <h1>How to Eliminate Elephant's Foot on Functional Snap-Fit Parts</h1>
+    <div class="meta-byline">
+      <span>Dimensional Calibration</span>
+      <span>•</span>
+      <span>Tolerance Benchmarks</span>
+      <span>•</span>
+      <span>Updated Fall 2026</span>
+    </div>
+
+    <p>Few things are more frustrating than printing a precision sliding lid or interlocking box, only to find the parts impossible to assemble. When you inspect the failure point, the culprit is almost always a flared, bulging ridge along the bottom 0.6 mm of the print: the classic <em>Elephant's Foot</em>.</p>
+
+    <p>This flare happens because the hot nozzle forces molten plastic downward against a heated bed to guarantee adhesion, squishing the bottom perimeters outward beyond their intended CAD profile. Here is how to kill this dimensional bulge without making your prints lift off the sheet mid-run.</p>
+
+    <div class="note-box">
+      <p><strong>Designing sliding assemblies?</strong> Our <a href="../index.html">Parametric Storage Box Generator</a> automatically offsets perimeter clearances to prevent joint seizure.</p>
+    </div>
+
+    <h2>1. The Slicer Solution: Elephant Foot Compensation</h2>
+    <p>Modern slicers (Bambu Studio, OrcaSlicer, PrusaSlicer, and Cura) include a dedicated calculation to pull back initial perimeter paths. Instead of sanding finished parts with a hobby knife, let the g-code do the compensation:</p>
+    <ul>
+      <li><strong>PrusaSlicer / SuperSlicer:</strong> Set <em>Elephant foot compensation</em> to <code>0.15 mm - 0.20 mm</code>.</li>
+      <li><strong>OrcaSlicer / Bambu Studio:</strong> Adjust <em>Initial layer elephant foot compensation</em> to <code>0.15 mm</code>.</li>
+      <li><strong>Cura:</strong> Enable <em>Initial Layer Horizontal Expansion</em> and set it to a negative value: <code>-0.15 mm</code>.</li>
+    </ul>
+
+    <h2>2. Bed Temperature vs Glass Transition (Tg)</h2>
+    <p>Keeping your heated bed right at the edge of the polymer's glass transition temperature creates perpetual slump under nozzle weight:</p>
+    <ul>
+      <li><strong>Standard PLA:</strong> Has a Tg around <code>55°C - 60°C</code>. If your bed runs at 65°C throughout the entire print, the bottom layers stay rubbery and continue bulging outwards. Drop bed temperature to <code>55°C</code> after layer 2.</li>
+      <li><strong>PETG:</strong> Runs well at <code>70°C - 75°C</code> on textured PEI. Avoid running 85°C unless you suffer severe draft cooling.</li>
+    </ul>
+
+    <h2>3. The 45-Degree Bottom Chamfer Trick</h2>
+    <p>If you're generating custom CAD enclosures, the most foolproof mechanical fix is adding a subtle <code>0.5 mm × 45°</code> chamfer along the base perimeter edge. Even if the first layer squishes outward slightly, the expansion simply fills the empty chamfer pocket without protruding beyond the outer functional wall.</p>
+
+    <h2>4. Perfecting Z-Offset: Squish vs Over-Compression</h2>
+    <p>Don't confuse bed leveling with excessive nozzle squish. A properly calibrated first layer should feature flat, fused ribbons without sharp plastic ridges pushing up between adjacent lines. If the nozzle plows trenches into the extruded plastic, raise your probe Z-offset by <code>+0.02 mm to +0.04 mm</code>.</p>
+
+    <h2>Summary</h2>
+    <p>Apply -0.15 mm initial horizontal expansion, drop your bed temp after layer 2, and use base chamfers on sliding fits. Generate production-ready utility models directly inside your browser on the <a href="../index.html">STLKit3D Generator Hub</a>.</p>
+  </div>
+</body>
+</html>
