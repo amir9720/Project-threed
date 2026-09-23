@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Gridfinity Bin Generator | STLKit3D</title>
+  <meta name="description" content="Generate parametric, modular Gridfinity storage bins directly in your browser. Free, instant client-side binary STL export.">
+  <link rel="canonical" href="https://stlkit3d.com/gridfinity.html">
+  <style>
+    :root {
+      --bg-dark: #0b1120;
+      --card-bg: #1e293b;
+      --border-color: #334155;
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(8px);
+    }
+
+    .brand {
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: var(--text-main);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand span {
+      color: var(--accent);
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-main);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .tool-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .tool-header h1 {
+      font-size: 1.4rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .tool-header p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .control-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .control-group label span {
+      color: var(--accent);
+    }
+
+    input[type="range"] {
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      background: #334155;
+      border-radius: 4px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+    }
+
+    .primary-btn {
+      background: var(--accent);
+      color: #04101e;
+      border: none;
+      padding: 0.85rem 1.25rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .primary-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .primary-btn:active {
+      transform: scale(0.98);
+    }
+
+    .viewer-card {
+      background: #020617;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 380px;
+      position: relative;
+    }
+
+    #viewport {
+      width: 100%;
+      height: 100%;
+      min-height: 380px;
+    }
+
+    .viewer-hint {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.7);
+      padding: 4px 8px;
+      border-radius: 4px;
+      pointer-events: none;
+    }
+
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+  <header>
+    <a href="/" class="brand">STLKit<span>3D</span></a>
+    <div class="nav-links">
+      <a href="/">← All Tools</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="tool-card">
+      <div class="tool-header">
+        <h1>Gridfinity Parametric Bin</h1>
+        <p>Standard 42mm modular grid pitch with internal divider controls. Generates instant watertight binary STL for 3D printing.</p>
+      </div>
+
+      <div class="control-group">
+        <label for="gf-x">Grid Width (X units): <span id="gf-x-val">2</span></label>
+        <input type="range" id="gf-x" min="1" max="5" value="2" step="1">
+      </div>
+
+      <div class="control-group">
+        <label for="gf-y">Grid Depth (Y units): <span id="gf-y-val">1</span></label>
+        <input type="range" id="gf-y" min="1" max="5" value="1" step="1">
+      </div>
+
+      <div class="control-group">
+        <label for="gf-u">Height (Units - 7mm pitch): <span id="gf-u-val">4 (28mm)</span></label>
+        <input type="range" id="gf-u" min="2" max="10" value="4" step="1">
+      </div>
+
+      <div class="control-group">
+        <label for="gf-div">Internal Dividers: <span id="gf-div-val">1</span></label>
+        <input type="range" id="gf-div" min="0" max="4" value="1" step="1">
+      </div>
+
+      <div class="control-group">
+        <label for="gf-wall">Wall Thickness: <span id="gf-wall-val">1.6mm</span></label>
+        <input type="range" id="gf-wall" min="1.2" max="2.8" value="1.6" step="0.2">
+      </div>
+
+      <button id="download-stl-btn" class="primary-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Gridfinity STL
+      </button>
+    </section>
+
+    <section class="viewer-card">
+      <div id="viewport"></div>
+      <div class="viewer-hint">Drag to rotate • Scroll to zoom</div>
+    </section>
+  </main>
+
+  <footer>
+    <p>STLKit3D — Zero login, client-side 3D printing utility tools.</p>
+  </footer>
+
+  <script>
+    const GRID_SIZE = 42.0;
+    const TOLERANCE = 0.5;
+    const U_HEIGHT = 7.0;
+    const BASE_HEIGHT = 4.4;
+
+    const inputX = document.getElementById('gf-x');
+    const inputY = document.getElementById('gf-y');
+    const inputU = document.getElementById('gf-u');
+    const inputDiv = document.getElementById('gf-div');
+    const inputWall = document.getElementById('gf-wall');
+
+    const valX = document.getElementById('gf-x-val');
+    const valY = document.getElementById('gf-y-val');
+    const valU = document.getElementById('gf-u-val');
+    const valDiv = document.getElementById('gf-div-val');
+    const valWall = document.getElementById('gf-wall-val');
+    const downloadBtn = document.getElementById('download-stl-btn');
+
+    // Three.js Scene Setup
+    const container = document.getElementById('viewport');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x020617);
+
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.set(100, 110, 140);
+    camera.lookAt(0, 15, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+
+    const ambLight = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(ambLight);
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(50, 100, 70);
+    scene.add(dirLight);
+
+    const gridHelper = new THREE.GridHelper(200, 20, 0x334155, 0x1e293b);
+    scene.add(gridHelper);
+
+    // Simple Orbit Controls on Drag
+    let isDragging = false;
+    let prevMousePos = { x: 0, y: 0 };
+    container.addEventListener('mousedown', (e) => { isDragging = true; prevMousePos = { x: e.clientX, y: e.clientY }; });
+    window.addEventListener('mouseup', () => { isDragging = false; });
+    container.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const deltaX = e.clientX - prevMousePos.x;
+      const deltaY = e.clientY - prevMousePos.y;
+      scene.rotation.y += deltaX * 0.01;
+      scene.rotation.x += deltaY * 0.01;
+      prevMousePos = { x: e.clientX, y: e.clientY };
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+
+    function getParameters() {
+      const x = parseInt(inputX.value, 10);
+      const y = parseInt(inputY.value, 10);
+      const u = parseInt(inputU.value, 10);
+      const div = parseInt(inputDiv.value, 10);
+      const wall = parseFloat(inputWall.value);
+
+      const width = (x * GRID_SIZE) - TOLERANCE;
+      const depth = (y * GRID_SIZE) - TOLERANCE;
+      const height = u * U_HEIGHT;
+
+      return { x, y, u, div, wall, width, depth, height };
+    }
+
+    let modelGroup = new THREE.Group();
+    scene.add(modelGroup);
+
+    function updatePreview() {
+      valX.textContent = inputX.value;
+      valY.textContent = inputY.value;
+      valU.textContent = `${inputU.value} (${inputU.value * U_HEIGHT}mm)`;
+      valDiv.textContent = inputDiv.value;
+      valWall.textContent = `${inputWall.value}mm`;
+
+      const p = getParameters();
+      scene.remove(modelGroup);
+      modelGroup = new THREE.Group();
+
+      const mat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.4 });
+      const outerGeo = new THREE.BoxGeometry(p.width, p.height, p.depth);
+      const outerMesh = new THREE.Mesh(outerGeo, mat);
+      outerMesh.position.y = p.height / 2;
+      modelGroup.add(outerMesh);
+
+      // Visual Cavity
+      const innerW = (p.width - (p.wall * 2) - (p.div * p.wall)) / (p.div + 1);
+      const innerH = p.height - BASE_HEIGHT;
+      const innerD = p.depth - (p.wall * 2);
+      const darkMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.8 });
+
+      for (let i = 0; i <= p.div; i++) {
+        const cavGeo = new THREE.BoxGeometry(innerW, innerH, innerD);
+        const cavMesh = new THREE.Mesh(cavGeo, darkMat);
+        const startX = -p.width / 2 + p.wall + innerW / 2;
+        const posX = startX + i * (innerW + p.wall);
+        cavMesh.position.set(posX, BASE_HEIGHT + innerH / 2 + 0.1, 0);
+        modelGroup.add(cavMesh);
+      }
+
+      scene.add(modelGroup);
+    }
+
+    [inputX, inputY, inputU, inputDiv, inputWall].forEach(el => el.addEventListener('input', updatePreview));
+
+    function generateBinarySTL(p) {
+      const triangles = [];
+      function addQuad(p1, p2, p3, p4) {
+        triangles.push([p1, p2, p3]);
+        triangles.push([p1, p3, p4]);
+      }
+
+      const hw = p.width / 2;
+      const hd = p.depth / 2;
+      const h = p.height;
+      const inHw = hw - p.wall;
+      const inHd = hd - p.wall;
+
+      // Outer Shell
+      addQuad([-hw, 0, -hd], [hw, 0, -hd], [hw, 0, hd], [-hw, 0, hd]);
+      addQuad([-hw, 0, -hd], [-hw, h, -hd], [hw, h, -hd], [hw, 0, -hd]);
+      addQuad([hw, 0, hd], [hw, h, hd], [-hw, h, hd], [-hw, 0, hd]);
+      addQuad([-hw, 0, hd], [-hw, h, hd], [-hw, h, -hd], [-hw, 0, -hd]);
+      addQuad([hw, 0, -hd], [hw, h, -hd], [hw, h, hd], [hw, 0, hd]);
+
+      // Rims
+      addQuad([-hw, h, -hd], [-inHw, h, -inHd], [inHw, h, -inHd], [hw, h, -hd]);
+      addQuad([-hw, h, hd], [hw, h, hd], [inHw, h, inHd], [-inHw, h, inHd]);
+      addQuad([-hw, h, -hd], [-hw, h, hd], [-inHw, h, inHd], [-inHw, h, -inHd]);
+      addQuad([hw, h, hd], [hw, h, -hd], [inHw, h, -inHd], [inHw, h, inHd]);
+
+      // Inner Floor
+      addQuad([-inHw, BASE_HEIGHT, -inHd], [inHw, BASE_HEIGHT, -inHd], [inHw, BASE_HEIGHT, inHd], [-inHw, BASE_HEIGHT, inHd]);
+
+      // Inner Walls
+      addQuad([-inHw, BASE_HEIGHT, -inHd], [-inHw, h, -inHd], [inHw, h, -inHd], [inHw, BASE_HEIGHT, -inHd]);
+      addQuad([inHw, BASE_HEIGHT, inHd], [inHw, h, inHd], [-inHw, h, inHd], [-inHw, BASE_HEIGHT, inHd]);
+      addQuad([-inHw, BASE_HEIGHT, inHd], [-inHw, h, inHd], [-inHw, h, -inHd], [-inHw, BASE_HEIGHT, -inHd]);
+      addQuad([inHw, BASE_HEIGHT, -inHd], [inHw, h, -inHd], [inHw, h, inHd], [inHw, BASE_HEIGHT, inHd]);
+
+      // Dividers
+      if (p.div > 0) {
+        const pocketW = (p.width - (p.wall * 2) - (p.div * p.wall)) / (p.div + 1);
+        for (let i = 1; i <= p.div; i++) {
+          const dx1 = -inHw + i * pocketW + (i - 1) * p.wall;
+          const dx2 = dx1 + p.wall;
+          addQuad([dx1, BASE_HEIGHT, -inHd], [dx1, h, -inHd], [dx2, h, -inHd], [dx2, BASE_HEIGHT, -inHd]);
+          addQuad([dx1, BASE_HEIGHT, inHd], [dx2, BASE_HEIGHT, inHd], [dx2, h, inHd], [dx1, h, inHd]);
+          addQuad([dx1, h, -inHd], [dx1, h, inHd], [dx2, h, inHd], [dx2, h, -inHd]);
+        }
+      }
+
+      const buffer = new ArrayBuffer(84 + triangles.length * 50);
+      const view = new DataView(buffer);
+      view.setUint32(80, triangles.length, true);
+
+      let offset = 84;
+      triangles.forEach(tri => {
+        offset += 12;
+        for (let v = 0; v < 3; v++) {
+          view.setFloat32(offset, tri[v][0], true);
+          view.setFloat32(offset + 4, tri[v][1], true);
+          view.setFloat32(offset + 8, tri[v][2], true);
+          offset += 12;
+        }
+        offset += 2;
+      });
+
+      return new Blob([buffer], { type: 'application/octet-stream' });
+    }
+
+    downloadBtn.addEventListener('click', () => {
+      const p = getParameters();
+      const blob = generateBinarySTL(p);
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Gridfinity_${p.x}x${p.y}_${p.u}U.stl`;
+      link.click();
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    }
+
+    updatePreview();
+    animate();
+  </script>
+</body>
+</html>
