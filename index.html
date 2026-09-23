@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>STLKit3D | Free Online STL & 3D Print Generators (No CAD Required)</title>
-  <meta name="description" content="Generate 3D printable STL models instantly in your browser. Create custom keychains, lithophanes, boxes, cable clips, and calculate color swaps with zero CAD skills." />
-  <meta name="keywords" content="STL generator, 3D printing tools, online CAD, lithophane maker, parametric 3D models, free STL files, color swap calculator" />
+  <title>STLKit3D | Free Online STL & 3D Print Generators (Gridfinity, Boxes, Clips)</title>
+  <meta name="description" content="Generate 3D printable STL models instantly in your browser. Parametric Gridfinity bins, custom storage boxes, desk cable clips, flat lithophanes, keychains, and print calculators with zero CAD required." />
+  <meta name="keywords" content="Gridfinity generator, online CAD, STL generator, 3D printing tools, parametric boxes, lithophane maker, cable clip generator, 3D print calculators, free STL files" />
   <link rel="canonical" href="https://stlkit3d.com/" />
   
   <!-- Open Graph Meta Tags -->
-  <meta property="og:title" content="STLKit3D | Free Online STL & 3D Print Generators" />
-  <meta property="og:description" content="Generate ready-to-print STL files directly in your web browser. Free parametric 3D utilities for makers." />
+  <meta property="og:title" content="STLKit3D | Free Online STL & Gridfinity Generators" />
+  <meta property="og:description" content="Generate ready-to-print STL files directly in your web browser. Free parametric Gridfinity and 3D utility tools for makers." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://stlkit3d.com/" />
   <meta property="og:site_name" content="STLKit3D" />
@@ -369,7 +369,8 @@
 
   <!-- Navigation Tabs -->
   <nav class="tabs-nav">
-    <button class="tab-btn active" onclick="switchTool('keychain')">Keychain Tag</button>
+    <button class="tab-btn active" onclick="switchTool('gridfinity')">Gridfinity Bin</button>
+    <button class="tab-btn" onclick="switchTool('keychain')">Keychain Tag</button>
     <button class="tab-btn" onclick="switchTool('box')">Custom Storage Box</button>
     <button class="tab-btn" onclick="switchTool('lithophane')">Flat Lithophane</button>
     <button class="tab-btn" onclick="switchTool('cable')">Desk Cable Clip</button>
@@ -381,8 +382,50 @@
   <!-- Main Tools Workspace -->
   <main class="tool-container">
 
+    <!-- 0. GRIDFINITY GENERATOR (FLAGSHIP TOOL) -->
+    <div id="tool-gridfinity" class="tool-panel active">
+      <div class="controls-col">
+        <h3>Parametric Gridfinity Bin</h3>
+        <p style="font-size: 0.85rem; color: var(--text-dim);">Standard 42mm modular grid pitch with customizable internal dividers.</p>
+        
+        <div class="form-group">
+          <label>Grid Width X (42mm units) <span class="val-badge" id="gf-x-val">2</span></label>
+          <input type="range" id="gf-x" min="1" max="5" value="2" step="1" oninput="syncVal('gf-x', 'gf-x-val'); updateGridfinityPreview();" />
+        </div>
+
+        <div class="form-group">
+          <label>Grid Depth Y (42mm units) <span class="val-badge" id="gf-y-val">1</span></label>
+          <input type="range" id="gf-y" min="1" max="5" value="1" step="1" oninput="syncVal('gf-y', 'gf-y-val'); updateGridfinityPreview();" />
+        </div>
+
+        <div class="form-group">
+          <label>Height (7mm pitch Units) <span class="val-badge" id="gf-u-val">4 (28mm)</span></label>
+          <input type="range" id="gf-u" min="2" max="10" value="4" step="1" oninput="syncGfHeight(); updateGridfinityPreview();" />
+        </div>
+
+        <div class="form-group">
+          <label>Internal Dividers (X) <span class="val-badge" id="gf-div-val">1</span></label>
+          <input type="range" id="gf-div" min="0" max="4" value="1" step="1" oninput="syncVal('gf-div', 'gf-div-val'); updateGridfinityPreview();" />
+        </div>
+
+        <div class="form-group">
+          <label>Wall Thickness (mm) <span class="val-badge" id="gf-wall-val">1.6</span></label>
+          <input type="range" id="gf-wall" min="1.2" max="2.8" step="0.2" value="1.6" oninput="syncVal('gf-wall', 'gf-wall-val'); updateGridfinityPreview();" />
+        </div>
+
+        <button class="btn-action" onclick="downloadGridfinitySTL()">Download Gridfinity STL</button>
+      </div>
+
+      <div class="viewport-col">
+        <div class="viewport-wrapper">
+          <div id="gf-canvas" class="viewport-canvas"></div>
+          <span class="viewport-hint">Rotate: Left-Click • Zoom: Scroll</span>
+        </div>
+      </div>
+    </div>
+
     <!-- 1. KEYCHAIN GENERATOR -->
-    <div id="tool-keychain" class="tool-panel active">
+    <div id="tool-keychain" class="tool-panel">
       <div class="controls-col">
         <h3>Keychain Tag Generator</h3>
         <p style="font-size: 0.85rem; color: var(--text-dim);">Create a flat name tag with raised text and a mounting hole.</p>
@@ -659,6 +702,10 @@
   <!-- Content & SEO Cards Section -->
   <section class="seo-cards">
     <div class="seo-card">
+      <h3>Modular Gridfinity System Standard</h3>
+      <p>Our Gridfinity bin generator implements the authentic 42mm base pitch with a 0.5mm clearance offset and standard 7mm unit heights (U). Create custom multi-compartment organizers ready for your workshop drawers.</p>
+    </div>
+    <div class="seo-card">
       <h3>100% Watertight Mesh Geometry</h3>
       <p>Every generator uses parametric extrusion algorithms that prevent non-manifold edges, inverted normals, and unclosed surfaces, ensuring your slicer interprets the file cleanly.</p>
     </div>
@@ -668,7 +715,7 @@
     </div>
     <div class="seo-card">
       <h3>Zero Cloud Storage & High Privacy</h3>
-      <p>Your uploaded photos for lithophanes and entered custom text never hit an external server. Everything processes inside your browser's WebGL and WebAssembly instance.</p>
+      <p>Your uploaded photos for lithophanes and entered custom dimensions never hit an external server. Everything processes in real-time inside your browser's WebGL instance.</p>
     </div>
   </section>
 
@@ -698,11 +745,14 @@
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
       
-      event.target.classList.add('active');
-      const activePanel = document.getElementById('tool-' + toolId);
-      activePanel.classList.add('active');
+      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(toolId));
+      if (activeBtn) activeBtn.classList.add('active');
 
-      // Trigger Three.js render resize
+      const activePanel = document.getElementById('tool-' + toolId);
+      if (activePanel) activePanel.classList.add('active');
+
+      // Trigger Three.js render setup/resize
+      if(toolId === 'gridfinity') initGridfinity3D();
       if(toolId === 'keychain') initKeychain3D();
       if(toolId === 'box') initBox3D();
       if(toolId === 'cable') initCable3D();
@@ -713,7 +763,13 @@
       document.getElementById(badgeId).innerText = document.getElementById(sliderId).value;
     }
 
+    function syncGfHeight() {
+      const u = parseInt(document.getElementById('gf-u').value, 10);
+      document.getElementById('gf-u-val').innerText = `${u} (${u * 7}mm)`;
+    }
+
     // --- THREE.JS VIEWPORT CONTROLLERS ---
+    let gfScene, gfCamera, gfRenderer, gfMesh, gfControls;
     let kcScene, kcCamera, kcRenderer, kcMesh, kcControls;
     let boxScene, boxCamera, boxRenderer, boxMesh, boxControls;
     let cableScene, cableCamera, cableRenderer, cableMesh, cableControls;
@@ -726,7 +782,7 @@
       scene.background = new THREE.Color(0x0b0f19);
 
       const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 1, 1000);
-      camera.position.set(60, 60, 80);
+      camera.position.set(70, 75, 95);
 
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(container.clientWidth, container.clientHeight);
@@ -742,8 +798,8 @@
       const light2 = new THREE.AmbientLight(0x404040, 1.2);
       scene.add(light2);
 
-      const grid = new THREE.GridHelper(120, 12, 0x334155, 0x1e293b);
-      grid.position.y = -10;
+      const grid = new THREE.GridHelper(140, 14, 0x334155, 0x1e293b);
+      grid.position.y = 0;
       scene.add(grid);
 
       function animate() {
@@ -754,6 +810,137 @@
       animate();
 
       return { scene, camera, renderer, controls };
+    }
+
+    // 0. GRIDFINITY VIEWER & LOGIC
+    const GF_PITCH = 42.0;
+    const GF_TOLERANCE = 0.5;
+    const GF_U_H = 7.0;
+    const GF_BASE_H = 4.4;
+
+    function initGridfinity3D() {
+      if (!gfScene) {
+        const v = setupViewer('gf-canvas');
+        gfScene = v.scene; gfCamera = v.camera; gfRenderer = v.renderer; gfControls = v.controls;
+      }
+      updateGridfinityPreview();
+    }
+
+    function getGridfinityParams() {
+      const x = parseInt(document.getElementById('gf-x').value, 10);
+      const y = parseInt(document.getElementById('gf-y').value, 10);
+      const u = parseInt(document.getElementById('gf-u').value, 10);
+      const div = parseInt(document.getElementById('gf-div').value, 10);
+      const wall = parseFloat(document.getElementById('gf-wall').value);
+
+      const width = (x * GF_PITCH) - GF_TOLERANCE;
+      const depth = (y * GF_PITCH) - GF_TOLERANCE;
+      const height = u * GF_U_H;
+
+      return { x, y, u, div, wall, width, depth, height };
+    }
+
+    function updateGridfinityPreview() {
+      if (!gfScene) return;
+      if (gfMesh) gfScene.remove(gfMesh);
+
+      const p = getGridfinityParams();
+      const group = new THREE.Group();
+
+      const mat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.35, metalness: 0.1 });
+      const outerGeo = new THREE.BoxGeometry(p.width, p.height, p.depth);
+      const outerMesh = new THREE.Mesh(outerGeo, mat);
+      outerMesh.position.y = p.height / 2;
+      group.add(outerMesh);
+
+      // Cavity simulation
+      const innerW = (p.width - (p.wall * 2) - (p.div * p.wall)) / (p.div + 1);
+      const innerH = p.height - GF_BASE_H;
+      const innerD = p.depth - (p.wall * 2);
+      const pocketMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.8 });
+
+      for (let i = 0; i <= p.div; i++) {
+        const cavGeo = new THREE.BoxGeometry(innerW, innerH, innerD);
+        const cavMesh = new THREE.Mesh(cavGeo, pocketMat);
+        const startX = -p.width / 2 + p.wall + innerW / 2;
+        const posX = startX + i * (innerW + p.wall);
+        cavMesh.position.set(posX, GF_BASE_H + innerH / 2 + 0.1, 0);
+        group.add(cavMesh);
+      }
+
+      gfMesh = group;
+      gfScene.add(gfMesh);
+    }
+
+    function downloadGridfinitySTL() {
+      const p = getGridfinityParams();
+      const triangles = [];
+
+      function addQuad(p1, p2, p3, p4) {
+        triangles.push([p1, p2, p3]);
+        triangles.push([p1, p3, p4]);
+      }
+
+      const hw = p.width / 2;
+      const hd = p.depth / 2;
+      const h = p.height;
+      const inHw = hw - p.wall;
+      const inHd = hd - p.wall;
+
+      // Bottom plate
+      addQuad([-hw, 0, -hd], [hw, 0, -hd], [hw, 0, hd], [-hw, 0, hd]);
+      // Outer 4 walls
+      addQuad([-hw, 0, -hd], [-hw, h, -hd], [hw, h, -hd], [hw, 0, -hd]);
+      addQuad([hw, 0, hd], [hw, h, hd], [-hw, h, hd], [-hw, 0, hd]);
+      addQuad([-hw, 0, hd], [-hw, h, hd], [-hw, h, -hd], [-hw, 0, -hd]);
+      addQuad([hw, 0, -hd], [hw, h, -hd], [hw, h, hd], [hw, 0, hd]);
+
+      // Top edge rims
+      addQuad([-hw, h, -hd], [-inHw, h, -inHd], [inHw, h, -inHd], [hw, h, -hd]);
+      addQuad([-hw, h, hd], [hw, h, hd], [inHw, h, inHd], [-inHw, h, inHd]);
+      addQuad([-hw, h, -hd], [-hw, h, hd], [-inHw, h, inHd], [-inHw, h, -inHd]);
+      addQuad([hw, h, hd], [hw, h, -hd], [inHw, h, -inHd], [inHw, h, inHd]);
+
+      // Inner Floor
+      addQuad([-inHw, GF_BASE_H, -inHd], [inHw, GF_BASE_H, -inHd], [inHw, GF_BASE_H, inHd], [-inHw, GF_BASE_H, inHd]);
+
+      // Inner 4 Walls
+      addQuad([-inHw, GF_BASE_H, -inHd], [-inHw, h, -inHd], [inHw, h, -inHd], [inHw, GF_BASE_H, -inHd]);
+      addQuad([inHw, GF_BASE_H, inHd], [inHw, h, inHd], [-inHw, h, inHd], [-inHw, GF_BASE_H, inHd]);
+      addQuad([-inHw, GF_BASE_H, inHd], [-inHw, h, inHd], [-inHw, h, -inHd], [-inHw, GF_BASE_H, -inHd]);
+      addQuad([inHw, GF_BASE_H, -inHd], [inHw, h, -inHd], [inHw, h, inHd], [inHw, GF_BASE_H, inHd]);
+
+      // Internal Dividers
+      if (p.div > 0) {
+        const pocketW = (p.width - (p.wall * 2) - (p.div * p.wall)) / (p.div + 1);
+        for (let i = 1; i <= p.div; i++) {
+          const dx1 = -inHw + i * pocketW + (i - 1) * p.wall;
+          const dx2 = dx1 + p.wall;
+          addQuad([dx1, GF_BASE_H, -inHd], [dx1, h, -inHd], [dx2, h, -inHd], [dx2, GF_BASE_H, -inHd]);
+          addQuad([dx1, GF_BASE_H, inHd], [dx2, GF_BASE_H, inHd], [dx2, h, inHd], [dx1, h, inHd]);
+          addQuad([dx1, h, -inHd], [dx1, h, inHd], [dx2, h, inHd], [dx2, h, -inHd]);
+        }
+      }
+
+      // Generate Binary STL
+      const buffer = new ArrayBuffer(84 + triangles.length * 50);
+      const view = new DataView(buffer);
+      view.setUint32(80, triangles.length, true);
+
+      let offset = 84;
+      triangles.forEach(tri => {
+        offset += 12; // Normal (0,0,0)
+        for (let v = 0; v < 3; v++) {
+          view.setFloat32(offset, tri[v][0], true);
+          view.setFloat32(offset + 4, tri[v][1], true);
+          view.setFloat32(offset + 8, tri[v][2], true);
+          offset += 12;
+        }
+        offset += 2;
+      });
+
+      const blob = new Blob([buffer], { type: 'application/octet-stream' });
+      triggerDownload(blob, `Gridfinity_${p.x}x${p.y}_${p.u}U.stl`);
     }
 
     // 1. KEYCHAIN VIEWER & LOGIC
@@ -963,7 +1150,7 @@ endsolid box`;
 
     // Initialize default tool viewport on document load
     window.addEventListener('DOMContentLoaded', () => {
-      initKeychain3D();
+      initGridfinity3D();
       calculateColorSwap();
       calculateMaterial();
       calculateShrinkage();
