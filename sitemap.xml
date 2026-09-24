@@ -2,56 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://stlkit3d.com/</loc>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://stlkit3d.com/guides/slicer-settings.html</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://stlkit3d.com/guides/color-swap-tutorial.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://stlkit3d.com/guides/lithophane-guide.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://stlkit3d.com/guides/gridfinity-tolerances-guide.html</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://stlkit3d.com/legal/privacy-policy.html</loc>
-    <priority>0.5</priority>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://stlkit3d.com/legal/terms.html</loc>
-    <priority>0.5</priority>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://stlkit3d.com/legal/contact.html</loc>
-    <priority>0.5</priority>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 </urlset>
-  <url>
-    <loc>https://stlkit3d.com/guides/lithophane-guide.html</loc>
-    <priority>0.8</priority>
-  </url>
-<url>
-  <loc>https://stlkit3d.com/guides/watertight-box-guide.html</loc>
-  <priority>0.8</priority>
-</url>
-<url>
-  <loc>https://stlkit3d.com/guides/cable-clip-tolerances.html</loc>
-  <priority>0.8</priority>
-</url>
-<url>
-  <loc>https://stlkit3d.com/guides/keychain-text-guide.html</loc>
-  <priority>0.8</priority>
-</url>
-<url>
-  <loc>https://stlkit3d.com/guides/color-change-purge-guide.html</loc>
-  <priority>0.8</priority>
-</url>
-<url>
-  <loc>https://stlkit3d.com/guides/elephants-foot-tolerances.html</loc>
-  <priority>0.8</priority>
-</url>
-
-
-
-
-
-
