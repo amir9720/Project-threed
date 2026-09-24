@@ -862,12 +862,20 @@
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
 
-      const light1 = new THREE.DirectionalLight(0xffffff, 0.9);
-      light1.position.set(1, 2, 3);
-      scene.add(light1);
+      // --- STUDIO 3-POINT LIGHTING SETUP ---
+      // 1. Hemisphere Light for soft ambient visibility inside cavities
+      const hemiLight = new THREE.HemisphereLight(0xffffff, 0x1e293b, 0.9);
+      scene.add(hemiLight);
 
-      const light2 = new THREE.AmbientLight(0x404040, 1.2);
-      scene.add(light2);
+      // 2. Main Key Light for specular highlights and depth
+      const mainLight = new THREE.DirectionalLight(0xffffff, 0.7);
+      mainLight.position.set(60, 120, 80);
+      scene.add(mainLight);
+
+      // 3. Fill Light to illuminate internal floor and divider geometry
+      const fillLight = new THREE.DirectionalLight(0x38bdf8, 0.35);
+      fillLight.position.set(-80, -40, -60);
+      scene.add(fillLight);
 
       const grid = new THREE.GridHelper(140, 14, 0x334155, 0x1e293b);
       grid.position.y = 0;
@@ -924,11 +932,15 @@
       outerMesh.position.y = p.height / 2;
       group.add(outerMesh);
 
-      // Cavity simulation
+      // Cavity simulation with high-contrast distinct tone
       const innerW = (p.width - (p.wall * 2) - (p.div * p.wall)) / (p.div + 1);
       const innerH = p.height - GF_BASE_H;
       const innerD = p.depth - (p.wall * 2);
-      const pocketMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.8 });
+      const pocketMat = new THREE.MeshStandardMaterial({ 
+        color: 0x0369a1, 
+        roughness: 0.5, 
+        metalness: 0.15 
+      });
 
       for (let i = 0; i <= p.div; i++) {
         const cavGeo = new THREE.BoxGeometry(innerW, innerH, innerD);
