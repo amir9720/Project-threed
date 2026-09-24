@@ -6,6 +6,8 @@
   <title>STLKit3D | Free Online STL & 3D Print Generators (Gridfinity, Boxes, Clips)</title>
   <meta name="description" content="Generate 3D printable STL models instantly in your browser. Parametric Gridfinity bins, custom storage boxes, desk cable clips, flat lithophanes, keychains, and print calculators with zero CAD required." />
   <meta name="keywords" content="Gridfinity generator, online CAD, STL generator, 3D printing tools, parametric boxes, lithophane maker, cable clip generator, 3D print calculators, free STL files" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="author" content="STLKit3D" />
   <link rel="canonical" href="https://stlkit3d.com/" />
   
   <!-- Open Graph Meta Tags -->
@@ -14,6 +16,44 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://stlkit3d.com/" />
   <meta property="og:site_name" content="STLKit3D" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="STLKit3D | Free Online STL & Gridfinity Generators" />
+  <meta name="twitter:description" content="Generate ready-to-print STL files directly in your web browser. Free parametric Gridfinity and 3D utility tools for makers." />
+
+  <!-- Schema.org JSON-LD Markup for WebApplication & WebSite -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://stlkit3d.com/#webapp",
+        "url": "https://stlkit3d.com/",
+        "name": "STLKit3D Parametric CAD Utilities",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires WebGL support",
+        "description": "Browser-based parametric 3D model generator for instant watertight STL export, specializing in Gridfinity storage modules and workshop tools.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://stlkit3d.com/#website",
+        "url": "https://stlkit3d.com/",
+        "name": "STLKit3D",
+        "description": "Free Online Parametric 3D Printable STL Generators",
+        "inLanguage": "en-US"
+      }
+    ]
+  }
+  </script>
 
   <!-- Three.js & OrbitControls for Real-Time 3D Viewports -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -146,7 +186,7 @@
       max-width: 1100px;
       margin: 0 auto;
       padding: 0 16px;
-      min-height: 480px; /* جلوگیری از پرش صفحه حین جابجایی تب‌ها */
+      min-height: 480px;
     }
 
     .tool-panel {
@@ -181,7 +221,7 @@
       gap: 12px;
     }
 
-    /* بهینه‌سازی دقیق CLS برای محفظه سه‌بعدی */
+    /* Zero CLS container */
     .viewport-wrapper {
       width: 100%;
       height: 380px;
@@ -738,8 +778,8 @@
     <div class="footer-links">
       <a href="guides/slicer-settings.html">Slicer Optimization Guide</a> • 
       <a href="guides/color-swap-tutorial.html">Color Swap Tutorial</a> • 
-      <a href="guides/lithophane-guide.html">Lithophane Printing Guide</a> •
-      <a href="guides/watertight-box-guide.html">Watertight Box Guide</a> •
+      <a href="guides/lithophane-guide.html">Lithophane Printing Guide</a> • 
+      <a href="guides/watertight-box-guide.html">Watertight Box Guide</a> • 
       <a href="guides/cable-clip-tolerances.html">Cable Clip Tolerances</a> • 
       <a href="guides/keychain-text-guide.html">Keychain Text Guide</a> • 
       <a href="guides/color-change-purge-guide.html">Purge & Color Bleed Guide</a> • 
@@ -959,7 +999,7 @@
 
       let offset = 84;
       triangles.forEach(tri => {
-        offset += 12; // Normal (0,0,0)
+        offset += 12;
         for (let v = 0; v < 3; v++) {
           view.setFloat32(offset, tri[v][0], true);
           view.setFloat32(offset + 4, tri[v][1], true);
