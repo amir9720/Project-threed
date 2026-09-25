@@ -486,27 +486,27 @@
         
         <div class="form-group">
           <label>Grid Width X (42mm units) <span class="val-badge" id="gf-x-val">2</span></label>
-          <input type="range" id="gf-x" min="1" max="5" value="2" step="1" oninput="syncVal('gf-x', 'gf-x-val'); updateGridfinityPreview();" />
+          <input type="range" id="gf-x" min="1" max="5" value="2" step="1" oninput="syncVal('gf-x', 'gf-x-val'); scheduleUpdate('gridfinity');" />
         </div>
 
         <div class="form-group">
           <label>Grid Depth Y (42mm units) <span class="val-badge" id="gf-y-val">1</span></label>
-          <input type="range" id="gf-y" min="1" max="5" value="1" step="1" oninput="syncVal('gf-y', 'gf-y-val'); updateGridfinityPreview();" />
+          <input type="range" id="gf-y" min="1" max="5" value="1" step="1" oninput="syncVal('gf-y', 'gf-y-val'); scheduleUpdate('gridfinity');" />
         </div>
 
         <div class="form-group">
           <label>Height (7mm pitch Units) <span class="val-badge" id="gf-u-val">4 (28mm)</span></label>
-          <input type="range" id="gf-u" min="2" max="10" value="4" step="1" oninput="syncGfHeight(); updateGridfinityPreview();" />
+          <input type="range" id="gf-u" min="2" max="10" value="4" step="1" oninput="syncGfHeight(); scheduleUpdate('gridfinity');" />
         </div>
 
         <div class="form-group">
           <label>Internal Dividers (X) <span class="val-badge" id="gf-div-val">1</span></label>
-          <input type="range" id="gf-div" min="0" max="4" value="1" step="1" oninput="syncVal('gf-div', 'gf-div-val'); updateGridfinityPreview();" />
+          <input type="range" id="gf-div" min="0" max="4" value="1" step="1" oninput="syncVal('gf-div', 'gf-div-val'); scheduleUpdate('gridfinity');" />
         </div>
 
         <div class="form-group">
           <label>Wall Thickness (mm) <span class="val-badge" id="gf-wall-val">1.6</span></label>
-          <input type="range" id="gf-wall" min="1.2" max="2.8" step="0.2" value="1.6" oninput="syncVal('gf-wall', 'gf-wall-val'); updateGridfinityPreview();" />
+          <input type="range" id="gf-wall" min="1.2" max="2.8" step="0.2" value="1.6" oninput="syncVal('gf-wall', 'gf-wall-val'); scheduleUpdate('gridfinity');" />
         </div>
 
         <button class="btn-action" onclick="downloadGridfinitySTL()">Download Gridfinity STL</button>
@@ -528,22 +528,22 @@
         
         <div class="form-group">
           <label>Text Label</label>
-          <input type="text" id="kc-text" value="MAKER" maxlength="12" oninput="updateKeychainPreview()" />
+          <input type="text" id="kc-text" value="MAKER" maxlength="12" oninput="scheduleUpdate('keychain')" />
         </div>
         
         <div class="form-group">
           <label>Base Length (mm) <span class="val-badge" id="kc-len-val">60</span></label>
-          <input type="range" id="kc-len" min="30" max="120" value="60" oninput="syncVal('kc-len', 'kc-len-val'); updateKeychainPreview();" />
+          <input type="range" id="kc-len" min="30" max="120" value="60" oninput="syncVal('kc-len', 'kc-len-val'); scheduleUpdate('keychain');" />
         </div>
 
         <div class="form-group">
           <label>Base Width (mm) <span class="val-badge" id="kc-wid-val">25</span></label>
-          <input type="range" id="kc-wid" min="15" max="60" value="25" oninput="syncVal('kc-wid', 'kc-wid-val'); updateKeychainPreview();" />
+          <input type="range" id="kc-wid" min="15" max="60" value="25" oninput="syncVal('kc-wid', 'kc-wid-val'); scheduleUpdate('keychain');" />
         </div>
 
         <div class="form-group">
           <label>Base Thickness (mm) <span class="val-badge" id="kc-thk-val">3</span></label>
-          <input type="range" id="kc-thk" min="1.5" max="6" step="0.5" value="3" oninput="syncVal('kc-thk', 'kc-thk-val'); updateKeychainPreview();" />
+          <input type="range" id="kc-thk" min="1.5" max="6" step="0.5" value="3" oninput="syncVal('kc-thk', 'kc-thk-val'); scheduleUpdate('keychain');" />
         </div>
 
         <button class="btn-action" onclick="downloadKeychainSTL()">Download STL</button>
@@ -565,22 +565,22 @@
         
         <div class="form-group">
           <label>Length X (mm) <span class="val-badge" id="box-x-val">60</span></label>
-          <input type="range" id="box-x" min="20" max="150" value="60" oninput="syncVal('box-x', 'box-x-val'); updateBoxPreview();" />
+          <input type="range" id="box-x" min="20" max="150" value="60" oninput="syncVal('box-x', 'box-x-val'); scheduleUpdate('box');" />
         </div>
 
         <div class="form-group">
           <label>Width Y (mm) <span class="val-badge" id="box-y-val">40</span></label>
-          <input type="range" id="box-y" min="20" max="150" value="40" oninput="syncVal('box-y', 'box-y-val'); updateBoxPreview();" />
+          <input type="range" id="box-y" min="20" max="150" value="40" oninput="syncVal('box-y', 'box-y-val'); scheduleUpdate('box');" />
         </div>
 
         <div class="form-group">
           <label>Height Z (mm) <span class="val-badge" id="box-z-val">30</span></label>
-          <input type="range" id="box-z" min="15" max="100" value="30" oninput="syncVal('box-z', 'box-z-val'); updateBoxPreview();" />
+          <input type="range" id="box-z" min="15" max="100" value="30" oninput="syncVal('box-z', 'box-z-val'); scheduleUpdate('box');" />
         </div>
 
         <div class="form-group">
           <label>Wall Thickness (mm) <span class="val-badge" id="box-wall-val">2.0</span></label>
-          <input type="range" id="box-wall" min="1.2" max="5.0" step="0.4" value="2.0" oninput="syncVal('box-wall', 'box-wall-val'); updateBoxPreview();" />
+          <input type="range" id="box-wall" min="1.2" max="5.0" step="0.4" value="2.0" oninput="syncVal('box-wall', 'box-wall-val'); scheduleUpdate('box');" />
         </div>
 
         <button class="btn-action" onclick="downloadBoxSTL()">Download STL</button>
@@ -607,17 +607,17 @@
 
         <div class="form-group">
           <label>Target Width (mm) <span class="val-badge" id="litho-w-val">80</span></label>
-          <input type="range" id="litho-w" min="40" max="150" value="80" oninput="syncVal('litho-w', 'litho-w-val'); updateLithoPreview();" />
+          <input type="range" id="litho-w" min="40" max="150" value="80" oninput="syncVal('litho-w', 'litho-w-val'); scheduleUpdate('litho');" />
         </div>
 
         <div class="form-group">
           <label>Max Thickness (Dark areas) <span class="val-badge" id="litho-max-val">3.0</span></label>
-          <input type="range" id="litho-max" min="2.0" max="5.0" step="0.2" value="3.0" oninput="syncVal('litho-max', 'litho-max-val'); updateLithoPreview();" />
+          <input type="range" id="litho-max" min="2.0" max="5.0" step="0.2" value="3.0" oninput="syncVal('litho-max', 'litho-max-val'); scheduleUpdate('litho');" />
         </div>
 
         <div class="form-group">
           <label>Min Thickness (Light areas) <span class="val-badge" id="litho-min-val">0.8</span></label>
-          <input type="range" id="litho-min" min="0.4" max="1.4" step="0.1" value="0.8" oninput="syncVal('litho-min', 'litho-min-val'); updateLithoPreview();" />
+          <input type="range" id="litho-min" min="0.4" max="1.4" step="0.1" value="0.8" oninput="syncVal('litho-min', 'litho-min-val'); scheduleUpdate('litho');" />
         </div>
 
         <button class="btn-action" onclick="downloadLithoSTL()">Download STL</button>
@@ -639,12 +639,12 @@
         
         <div class="form-group">
           <label>Cable Diameter (mm) <span class="val-badge" id="cable-d-val">5.0</span></label>
-          <input type="range" id="cable-d" min="3.0" max="12.0" step="0.5" value="5.0" oninput="syncVal('cable-d', 'cable-d-val'); updateCablePreview();" />
+          <input type="range" id="cable-d" min="3.0" max="12.0" step="0.5" value="5.0" oninput="syncVal('cable-d', 'cable-d-val'); scheduleUpdate('cable');" />
         </div>
 
         <div class="form-group">
           <label>Clip Width / Depth (mm) <span class="val-badge" id="cable-w-val">12</span></label>
-          <input type="range" id="cable-w" min="8" max="25" value="12" oninput="syncVal('cable-w', 'cable-w-val'); updateCablePreview();" />
+          <input type="range" id="cable-w" min="8" max="25" value="12" oninput="syncVal('cable-w', 'cable-w-val'); scheduleUpdate('cable');" />
         </div>
 
         <button class="btn-action" onclick="downloadCableSTL()">Download STL</button>
@@ -859,7 +859,6 @@
       });
     }
 
-    // Attach passive click handlers for high responsiveness
     document.getElementById('main-tabs').addEventListener('click', (e) => {
       const btn = e.target.closest('.tab-btn');
       if (!btn) return;
@@ -874,6 +873,35 @@
     function syncGfHeight() {
       const u = parseInt(document.getElementById('gf-u').value, 10);
       document.getElementById('gf-u-val').innerText = `${u} (${u * 7}mm)`;
+    }
+
+    // --- NON-BLOCKING INP OPTIMIZATION (rAF Throttle & Memory Cleanup) ---
+    const pendingUpdates = {};
+    function scheduleUpdate(tool) {
+      if (pendingUpdates[tool]) return;
+      pendingUpdates[tool] = requestAnimationFrame(() => {
+        if (tool === 'gridfinity') updateGridfinityPreview();
+        else if (tool === 'keychain') updateKeychainPreview();
+        else if (tool === 'box') updateBoxPreview();
+        else if (tool === 'cable') updateCablePreview();
+        else if (tool === 'litho') updateLithoPreview();
+        pendingUpdates[tool] = null;
+      });
+    }
+
+    function cleanupMesh(parent, meshObj) {
+      if (!meshObj || !parent) return;
+      parent.remove(meshObj);
+      meshObj.traverse((child) => {
+        if (child.geometry) child.geometry.dispose();
+        if (child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach(m => m.dispose());
+          } else {
+            child.material.dispose();
+          }
+        }
+      });
     }
 
     // --- THREE.JS VIEWPORT CONTROLLERS ---
@@ -903,7 +931,6 @@
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
 
-      // Responsive canvas adjustment on window resize
       window.addEventListener('resize', () => {
         if (!container) return;
         const newW = container.clientWidth;
@@ -913,9 +940,8 @@
           camera.updateProjectionMatrix();
           renderer.setSize(newW, newH);
         }
-      });
+      }, { passive: true });
 
-      // --- STUDIO 3-POINT LIGHTING SETUP ---
       const hemiLight = new THREE.HemisphereLight(0xffffff, 0x1e293b, 0.9);
       scene.add(hemiLight);
 
@@ -971,7 +997,7 @@
 
     function updateGridfinityPreview() {
       if (!gfScene) return;
-      if (gfMesh) gfScene.remove(gfMesh);
+      cleanupMesh(gfScene, gfMesh);
 
       const p = getGridfinityParams();
       const group = new THREE.Group();
@@ -982,7 +1008,6 @@
       outerMesh.position.y = p.height / 2;
       group.add(outerMesh);
 
-      // Cavity simulation with high-contrast distinct tone
       const innerW = (p.width - (p.wall * 2) - (p.div * p.wall)) / (p.div + 1);
       const innerH = p.height - GF_BASE_H;
       const innerD = p.depth - (p.wall * 2);
@@ -1087,7 +1112,7 @@
 
     function updateKeychainPreview() {
       if (!kcScene) return;
-      if (kcMesh) kcScene.remove(kcMesh);
+      cleanupMesh(kcScene, kcMesh);
 
       const l = parseFloat(document.getElementById('kc-len').value);
       const w = parseFloat(document.getElementById('kc-wid').value);
@@ -1120,7 +1145,7 @@
 
     function updateBoxPreview() {
       if (!boxScene) return;
-      if (boxMesh) boxScene.remove(boxMesh);
+      cleanupMesh(boxScene, boxMesh);
 
       const x = parseFloat(document.getElementById('box-x').value);
       const y = parseFloat(document.getElementById('box-y').value);
@@ -1143,7 +1168,7 @@
 
     function updateCablePreview() {
       if (!cableScene) return;
-      if (cableMesh) cableScene.remove(cableMesh);
+      cleanupMesh(cableScene, cableMesh);
 
       const d = parseFloat(document.getElementById('cable-d').value);
       const w = parseFloat(document.getElementById('cable-w').value);
@@ -1166,7 +1191,7 @@
 
     function updateLithoPreview() {
       if (!lithoScene) return;
-      if (lithoMesh) lithoScene.remove(lithoMesh);
+      cleanupMesh(lithoScene, lithoMesh);
 
       const w = parseFloat(document.getElementById('litho-w').value);
       const geo = new THREE.PlaneGeometry(w, w * 0.75, 20, 20);
@@ -1202,7 +1227,7 @@
   facet normal -1 0 0\n  outer loop\n    vertex -${hx} -${hy} -${hz}\n    vertex -${hx} -${hy} ${hz}\n    vertex -${hx} ${hy} ${hz}\n  endloop\nendfacet
   facet normal -1 0 0\n  outer loop\n    vertex -${hx} -${hy} -${hz}\n    vertex -${hx} ${hy} ${hz}\n    vertex -${hx} ${hy} -${hz}\n  endloop\nendfacet
   facet normal 1 0 0\n  outer loop\n    vertex ${hx} -${hy} -${hz}\n    vertex ${hx} ${hy} -${hz}\n    vertex ${hx} ${hy} ${hz}\n  endloop\nendfacet
-  facet normal 1 0 0\n  outer loop\n    vertex ${hx} -${hy} -${hz}\n    vertex ${hx} ${hy} ${hz}\n    vertex ${hx} -${hy} ${hz}\n  endloop\nendfacet
+  facet normal 1 0 0\n  outer loop\n    vertex ${hx} -${hy} -${hz}\n    vertex ${hx} ${hy} ${hz}\n    vertex -${hx} -${hy} ${hz}\n  endloop\nendfacet
 endsolid box`;
     }
 
